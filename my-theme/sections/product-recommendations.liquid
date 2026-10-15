@@ -1,0 +1,171 @@
+{% comment %}
+  PRODUCT RECOMMENDATIONS SECTION
+  Features: Shopify Native Recommendations API, Section Rendering API, Responsive Card Grid.
+{% endcomment %}
+
+<div 
+  class="product-recommendations page-width" 
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
+  data-section-id="{{ section.id }}"
+  id="ProductRecommendations-{{ section.id }}"
+  style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="product-recommendations__header text-center">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="product-recommendations__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="product-recommendations__subheading">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="product-grid product-grid--desktop-{{ section.settings.columns_desktop }} product-grid--mobile-{{ section.settings.columns_mobile }}">
+      {%- for recommendation in recommendations.products -%}
+        <div class="product-grid__item">
+          {% render 'product-card', 
+            product: recommendation, 
+            show_vendor: section.settings.show_vendor,
+            show_secondary_image: section.settings.show_secondary_image,
+            media_aspect_ratio: section.settings.image_ratio 
+          %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  (function() {
+    const section = document.getElementById('ProductRecommendations-{{ section.id }}');
+    if (!section) return;
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      if (!entries[0].isIntersecting) return;
+      obs.unobserve(section);
+
+      const url = section.dataset.url;
+      if (!url) return;
+
+      fetch(url)
+        .then(response => response.text())
+        .then(text => {
+          const html = document.createElement('div');
+          html.innerHTML = text;
+          const recommendations = html.querySelector('.product-recommendations');
+          if (recommendations && recommendations.innerHTML.trim().length) {
+            section.innerHTML = recommendations.innerHTML;
+          }
+        })
+        .catch(e => console.error('Error loading recommendations:', e));
+    }, { rootMargin: '0px 0px 400px 0px' });
+
+    observer.observe(section);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "tag": "section",
+  "class": "shopify-section-recommendations",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Dynamic recommendations change and improve over time. [Learn more](https://help.shopify.com/manual/online-store/themes/theme-structure/sections-and-blocks#product-recommendations-section)"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Carefully selected products that pair nicely with this item"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4,
+      "label": "Maximum products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (4:5)" },
+        { "value": "adapt", "label": "Adapt to image" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show second image on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product recommendations"
+    }
+  ]
+}
+{% endschema %}

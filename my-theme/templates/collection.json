@@ -12,7 +12,8 @@
         "show_secondary_image": true,
         "show_vendor": false,
         "enable_filtering": true,
-        "enable_sorting": true
+        "enable_sorting": true,
+        "pagination_type": "load_more"
       }
     }
   },

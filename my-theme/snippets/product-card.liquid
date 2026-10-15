@@ -1,10 +1,13 @@
 {% comment %}
-  Renders a product card for grids (collections, search, recommendations).
-  Accepts:
-  - product: Product object
-  - show_vendor: Boolean
-  - show_secondary_image: Boolean
-  - media_aspect_ratio: 'square' | 'portrait' | 'adapt'
+  PREMIUM PRODUCT CARD SNIPPET
+  Features:
+  - Responsive Aspect Ratio (Square, Portrait, Adapt)
+  - Primary Image & Secondary Image on Hover
+  - Percentage Discount Badge & Sold Out Badge
+  - Optional Vendor
+  - Color Swatches Preview
+  - Quick-Add with inline Variant Selection for multi-variant products
+  - Full keyboard accessibility and Ajax Cart Drawer integration
 {% endcomment %}
 
 {%- liquid
@@ -17,11 +20,13 @@
   if ratio == 0 or ratio == nil
     assign ratio = 1
   endif
+
+  assign first_variant = product.selected_or_first_available_variant | default: product.variants.first
 -%}
 
 <div class="product-card" data-product-id="{{ product.id }}">
   <div class="product-card__media-wrapper" style="--aspect-ratio: {{ ratio }};">
-    <a href="{{ product.url }}" class="product-card__link" tabindex="-1" aria-hidden="true">
+    <a href="{{ product.url }}" class="product-card__link" aria-label="{{ product.title | escape }}">
       {%- if product.featured_media -%}
         {{ product.featured_media | image_url: width: 600 | image_tag:
           class: 'product-card__image product-card__image--primary',
@@ -45,7 +50,8 @@
     </a>
 
     {%- if product.compare_at_price > product.price and product.available -%}
-      <span class="product-card__badge product-card__badge--sale">Sale</span>
+      {%- assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
+      <span class="product-card__badge product-card__badge--sale">-{{ discount }}%</span>
     {%- elsif product.available == false -%}
       <span class="product-card__badge product-card__badge--sold-out">Sold Out</span>
     {%- endif -%}
@@ -60,22 +66,52 @@
       <a href="{{ product.url }}">{{ product.title | escape }}</a>
     </h3>
 
+    {%- comment -%} Color Swatches Preview {%- endcomment -%}
+    {%- for option in product.options_with_values -%}
+      {%- assign downcase_name = option.name | downcase -%}
+      {%- if downcase_name == 'color' or downcase_name == 'colour' -%}
+        <div class="product-card__swatches" aria-label="Available colors">
+          {%- for value in option.values limit: 5 -%}
+            <span 
+              class="product-card__swatch-dot" 
+              title="{{ value | escape }}" 
+              data-color-name="{{ value | handleize }}"
+            ></span>
+          {%- endfor -%}
+          {%- if option.values.size > 5 -%}
+            <span class="product-card__swatch-more">+{{ option.values.size | minus: 5 }}</span>
+          {%- endif -%}
+        </div>
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+
     {% render 'price', product: product, price_class: 'product-card__price' %}
 
     <div class="product-card__actions">
       {%- if product.available -%}
         {%- if product.has_only_default_variant -%}
           <form action="{{ routes.cart_add_url }}" method="post" class="product-card__form" data-product-card-form>
-            <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+            <input type="hidden" name="id" value="{{ first_variant.id }}">
             <input type="hidden" name="quantity" value="1">
-            <button type="submit" class="product-card__btn product-card__btn--quick-add" aria-label="Add {{ product.title | escape }} to cart">
+            <button 
+              type="submit" 
+              class="product-card__btn product-card__btn--quick-add" 
+              aria-label="Add {{ product.title | escape }} to cart"
+            >
               <span>+ Quick Add</span>
             </button>
           </form>
         {%- else -%}
-          <a href="{{ product.url }}" class="product-card__btn product-card__btn--options">
-            Choose Options
-          </a>
+          <button 
+            type="button" 
+            class="product-card__btn product-card__btn--quick-add" 
+            data-trigger-quick-select="{{ product.id }}"
+            aria-label="Select options for {{ product.title | escape }}"
+            aria-expanded="false"
+          >
+            <span>+ Quick Add</span>
+          </button>
         {%- endif -%}
       {%- else -%}
         <button type="button" class="product-card__btn product-card__btn--sold-out" disabled>
@@ -84,4 +120,63 @@
       {%- endif -%}
     </div>
   </div>
+
+  {%- comment -%} Inline Multi-Variant Quick Add Drawer/Sheet {%- endcomment -%}
+  {%- unless product.has_only_default_variant -%}
+    <div class="product-card__quick-select" id="QuickSelect-{{ product.id }}" hidden>
+      <div class="quick-select__header">
+        <span class="quick-select__title">Select Options</span>
+        <button type="button" class="quick-select__close" aria-label="Close options" data-close-quick-select>&times;</button>
+      </div>
+
+      <form action="{{ routes.cart_add_url }}" method="post" class="quick-select__form" data-quick-select-form>
+        <div class="quick-select__options">
+          {%- for option in product.options_with_values -%}
+            <div class="quick-select__option-group" data-option-index="{{ forloop.index0 }}">
+              <label class="quick-select__label">
+                {{ option.name }}: <span class="quick-select__selected-text" data-quick-option-value>{{ option.selected_value }}</span>
+              </label>
+              <div class="quick-select__values">
+                {%- for value in option.values -%}
+                  <label class="quick-select__val-label">
+                    <input 
+                      type="radio" 
+                      name="quick-option-{{ option.position }}-{{ product.id }}" 
+                      value="{{ value | escape }}" 
+                      class="visually-hidden quick-select__radio"
+                      data-option-index="{{ forloop.parentloop.index0 }}"
+                      {% if option.selected_value == value %}checked{% endif %}
+                    >
+                    <span class="quick-select__pill">{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <input type="hidden" name="id" value="{{ first_variant.id }}" data-quick-variant-id>
+        <input type="hidden" name="quantity" value="1">
+
+        <button 
+          type="submit" 
+          class="btn btn--primary quick-select__submit" 
+          data-quick-submit
+          {% unless first_variant.available %}disabled{% endunless %}
+        >
+          <span data-quick-submit-text>
+            {%- if first_variant.available -%}
+              Add to Cart &bull; {{ first_variant.price | money }}
+            {%- else -%}
+              Sold Out
+            {%- endif -%}
+          </span>
+        </button>
+
+        <script type="application/json" class="product-card__variants-json">
+          {{ product.variants | json }}
+        </script>
+      </form>
+    </div>
+  {%- endunless -%}
 </div>

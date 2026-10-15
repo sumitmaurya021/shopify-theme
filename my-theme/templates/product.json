@@ -2,16 +2,93 @@
   "sections": {
     "main": {
       "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "show_vendor": true,
+            "show_sku": true
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "inventory": {
+          "type": "inventory_notice",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "pills",
+            "enable_color_swatches": true
+          }
+        },
+        "quantity": {
+          "type": "quantity_selector",
+          "settings": {
+            "label": "Quantity"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true
+          }
+        },
+        "trust_badges": {
+          "type": "trust_badges",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "shipping_tab": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "content": "<p>Free standard delivery on all orders over $75. Orders are shipped within 1-2 business days with tracking. Easy 30-day returns.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "inventory",
+        "variant_picker",
+        "quantity",
+        "buy_buttons",
+        "trust_badges",
+        "description",
+        "shipping_tab"
+      ],
       "settings": {
-        "show_vendor": true,
-        "show_inventory_notice": true,
-        "show_dynamic_checkout": true,
-        "show_shipping_tab": true,
-        "shipping_tab_content": "Free standard delivery on all orders over $75. Orders are shipped within 1-2 business days with tracking. Easy 30-day returns."
+        "gallery_layout": "thumbnails_bottom",
+        "image_ratio": "square",
+        "enable_image_zoom": true,
+        "enable_sticky_cart": true
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You May Also Like",
+        "subheading": "Carefully selected products that pair nicely with this item",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "image_ratio": "square",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "padding_top": 40,
+        "padding_bottom": 60
       }
     }
   },
   "order": [
-    "main"
+    "main",
+    "recommendations"
   ]
 }
