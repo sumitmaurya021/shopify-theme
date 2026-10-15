@@ -387,6 +387,115 @@
   cursor: pointer;
 }
 
+/* Interactive Storefront Filters */
+.collection-filters {
+  margin-bottom: 1.5rem;
+}
+
+.collection-filters__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.875rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 6px;
+}
+
+.collection-filters__summary::-webkit-details-marker {
+  display: none;
+}
+
+.collection-filters__details[open] .collection-filters__summary svg:last-child {
+  transform: rotate(180deg);
+}
+
+.collection-filters__form {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background-color: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.collection-filters__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.75rem;
+}
+
+.collection-filter-group__heading {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.85rem 0;
+  color: #111827;
+}
+
+.collection-filter-group__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.collection-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.collection-filter-checkbox {
+  accent-color: #111827;
+  width: 16px;
+  height: 16px;
+}
+
+.collection-filter-label__count {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.collection-filter-price {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.price-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.price-input-label {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.price-input {
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.btn--small {
+  padding: 0.45rem 1rem;
+  font-size: 0.825rem;
+}
+
 /* Active Filters */
 .active-filters {
   display: flex;

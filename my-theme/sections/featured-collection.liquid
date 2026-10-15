@@ -1,0 +1,187 @@
+{% comment %}
+  FEATURED COLLECTION SECTION
+  Renders a curated product grid on the homepage with quick-add support.
+{% endcomment %}
+
+<div class="featured-collection page-width" id="FeaturedCollection-{{ section.id }}">
+  <div class="featured-collection__header text-center">
+    {%- if section.settings.subheading != blank -%}
+      <span class="featured-collection__subheading">{{ section.settings.subheading | escape }}</span>
+    {%- endif -%}
+
+    <h2 class="featured-collection__title">
+      {{ section.settings.title | default: 'Featured Collection' | escape }}
+    </h2>
+
+    {%- if section.settings.description != blank -%}
+      <p class="featured-collection__description rte">{{ section.settings.description }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- assign collection = section.settings.collection -%}
+  {%- assign products_to_display = section.settings.products_to_show | default: 4 -%}
+
+  <div class="product-grid product-grid--desktop-{{ section.settings.columns_desktop }} product-grid--mobile-2">
+    {%- if collection != blank and collection.products.size > 0 -%}
+      {%- for product in collection.products limit: products_to_display -%}
+        <div class="product-grid__item">
+          {% render 'product-card',
+            product: product,
+            show_vendor: section.settings.show_vendor,
+            show_secondary_image: section.settings.show_secondary_image,
+            media_aspect_ratio: section.settings.image_ratio
+          %}
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%} Onboarding placeholders {%- endcomment -%}
+      {%- for i in (1..products_to_display) -%}
+        <div class="product-grid__item">
+          <div class="product-card">
+            <div class="product-card__media-wrapper">
+              <div class="product-card__placeholder">
+                {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            </div>
+            <div class="product-card__info">
+              <span class="product-card__vendor">Example Brand</span>
+              <h3 class="product-card__title"><a href="#">Sample Product {{ i }}</a></h3>
+              <div class="price"><span class="price-item price-item--regular">$49.00</span></div>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.show_view_all and collection != blank -%}
+    <div class="featured-collection__footer text-center">
+      <a href="{{ collection.url }}" class="btn btn--secondary">
+        View All Products &rarr;
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .featured-collection {
+    padding: 3.5rem 1.5rem 4rem;
+  }
+
+  .featured-collection__header {
+    margin-bottom: 2.5rem;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .featured-collection__subheading {
+    font-size: 0.825rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .featured-collection__title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .featured-collection__description {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .featured-collection__footer {
+    margin-top: 2.75rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "class": "shopify-section-featured-collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Curated Selection"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (4:5)" },
+        { "value": "adapt", "label": "Adapt to image" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show second image on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View All' button",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection"
+    }
+  ]
+}
+{% endschema %}

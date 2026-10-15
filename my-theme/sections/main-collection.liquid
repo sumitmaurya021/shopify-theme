@@ -51,8 +51,90 @@
       {%- endif -%}
     </div>
 
-    {%- comment -%} Active Filters Display {%- endcomment -%}
-    {%- if section.settings.enable_filtering -%}
+    {%- comment -%} Interactive Filtering & Active Filters {%- endcomment -%}
+    {%- if section.settings.enable_filtering and collection.filters.size > 0 -%}
+      <div class="collection-filters">
+        <details class="collection-filters__details" id="CollectionFiltersDetails">
+          <summary class="collection-filters__summary btn btn--secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>Filter Products</span>
+            {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down' %}
+          </summary>
+
+          <form id="CollectionFiltersForm" class="collection-filters__form" method="get">
+            {%- comment -%} Preserve sort order if active {%- endcomment -%}
+            {%- if collection.sort_by != blank -%}
+              <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+            {%- endif -%}
+
+            <div class="collection-filters__grid">
+              {%- for filter in collection.filters -%}
+                <div class="collection-filter-group">
+                  <h4 class="collection-filter-group__heading">{{ filter.label }}</h4>
+
+                  {%- case filter.type -%}
+                    {%- when 'list' -%}
+                      <ul class="collection-filter-group__list" role="list">
+                        {%- for value in filter.values -%}
+                          <li class="collection-filter-group__item">
+                            <label class="collection-filter-label" for="Filter-{{ filter.label | handleize }}-{{ forloop.index }}">
+                              <input 
+                                type="checkbox" 
+                                name="{{ value.param_name }}" 
+                                value="{{ value.value }}"
+                                id="Filter-{{ filter.label | handleize }}-{{ forloop.index }}"
+                                class="collection-filter-checkbox"
+                                {% if value.active %}checked{% endif %}
+                                {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                                onchange="this.closest('form').submit();"
+                              >
+                              <span class="collection-filter-label__text">{{ value.label }}</span>
+                              <span class="collection-filter-label__count">({{ value.count }})</span>
+                            </label>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+
+                    {%- when 'price_range' -%}
+                      <div class="collection-filter-price">
+                        <div class="price-input-group">
+                          <label for="Filter-{{ filter.label | handleize }}-GTE" class="price-input-label">Min ({{ cart.currency.symbol }})</label>
+                          <input 
+                            type="number" 
+                            name="{{ filter.min_value.param_name }}" 
+                            id="Filter-{{ filter.label | handleize }}-GTE" 
+                            class="price-input"
+                            {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %} 
+                            min="0" 
+                            max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                            placeholder="0"
+                          >
+                        </div>
+                        <div class="price-input-group">
+                          <label for="Filter-{{ filter.label | handleize }}-LTE" class="price-input-label">Max ({{ cart.currency.symbol }})</label>
+                          <input 
+                            type="number" 
+                            name="{{ filter.max_value.param_name }}" 
+                            id="Filter-{{ filter.label | handleize }}-LTE" 
+                            class="price-input"
+                            {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"{% endif %} 
+                            min="0" 
+                            max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                            placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                          >
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--small price-apply-btn">Apply</button>
+                      </div>
+                  {%- endcase -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          </form>
+        </details>
+      </div>
+
       {%- assign has_active_filters = false -%}
       {%- for filter in collection.filters -%}
         {%- if filter.active_values.size > 0 or filter.min_value.value != nil or filter.max_value.value != nil -%}

@@ -11,6 +11,32 @@
     "search": "Search",
     "cart": "Cart"
   },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "on_sale": "Sale",
+      "regular_price": "Regular price",
+      "sale_price": "Sale price",
+      "unit_price_separator": "per",
+      "quantity": "Quantity",
+      "in_stock": "In Stock, Ready to Ship"
+    }
+  },
+  "collections": {
+    "general": {
+      "all_of_collection": "All",
+      "no_matches": "No products found in this collection.",
+      "items_with_count": {
+        "one": "1 product",
+        "other": "{{ count }} products"
+      }
+    },
+    "sorting": {
+      "title": "Sort by"
+    }
+  },
   "cart": {
     "title": "Your Cart",
     "subtotal": "Subtotal",
@@ -22,5 +48,15 @@
     "remove": "Remove",
     "note": "Add Order Note",
     "terms": "I agree with the terms and conditions"
+  },
+  "contact": {
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "comment": "Message",
+      "send": "Send Message",
+      "post_success": "Thanks for contacting us. We'll get back to you as soon as possible."
+    }
   }
 }
