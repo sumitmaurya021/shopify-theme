@@ -30,7 +30,14 @@
         </picture>
       {%- else -%}
         <div class="hero-section__placeholder">
-          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          <img
+            src="{{ 'hero-banner-demo.jpg' | asset_url }}"
+            alt="{{ section.settings.heading | default: shop.name | escape }}"
+            class="hero-section__media"
+            loading="eager"
+            width="2200"
+            height="1238"
+          >
         </div>
       {%- endif -%}
 
@@ -40,7 +47,7 @@
     </div>
 
     <div class="hero-section__content-wrapper section-container section-container--standard hero-section__content-wrapper--v-{{ vertical_align }} hero-section__content-wrapper--h-{{ text_align }}">
-      <div class="hero-section__content">
+      <div class="hero-section__content{% if section.settings.enable_card %} hero-section__content--card{% endif %}">
         {%- if section.settings.subheading != blank -%}
           <span class="hero-section__subheading{% if section.settings.subheading_pill %} hero-section__subheading--pill{% endif %}">
             {{ section.settings.subheading | escape }}
@@ -83,8 +90,10 @@
 <style>
   #Hero-{{ section.id }} {
     position: relative;
+    overflow: hidden;
     padding-top: {{ section.settings.padding_top_mobile | default: 0 }}px;
     padding-bottom: {{ section.settings.padding_bottom_mobile | default: 0 }}px;
+    background: radial-gradient(circle at 50% 30%, #1a1e2d 0%, #090a0f 100%);
   }
 
   @media (min-width: 768px) {
@@ -98,15 +107,28 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   /* Overlay Layout Styles */
+  #Hero-{{ section.id }}.hero-section--overlay .hero-section__inner {
+    position: relative;
+    min-height: 540px;
+  }
+
+  @media (min-width: 768px) {
+    #Hero-{{ section.id }}.hero-section--overlay .hero-section__inner {
+      min-height: 660px;
+    }
+  }
+
   #Hero-{{ section.id }}.hero-section--overlay .hero-section__media-container {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     z-index: 1;
+    overflow: hidden;
   }
 
   #Hero-{{ section.id }}.hero-section--overlay .hero-section__content-wrapper {
@@ -114,18 +136,29 @@
     z-index: 3;
     display: flex;
     flex-direction: column;
+    min-height: 540px;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  @media (min-width: 768px) {
+    #Hero-{{ section.id }}.hero-section--overlay .hero-section__content-wrapper {
+      min-height: 660px;
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
   }
 
   /* Height Presets */
-  .hero-section__media-container--small { min-height: 440px; }
-  .hero-section__media-container--medium { min-height: 580px; }
-  .hero-section__media-container--large { min-height: 720px; }
+  .hero-section__media-container--small { min-height: 460px; }
+  .hero-section__media-container--medium { min-height: 600px; }
+  .hero-section__media-container--large { min-height: 740px; }
   .hero-section__media-container--fullscreen { min-height: calc(100vh - var(--header-actual-height, 80px)); }
 
   @media (min-width: 768px) {
-    .hero-section__media-container--small { min-height: 500px; }
+    .hero-section__media-container--small { min-height: 520px; }
     .hero-section__media-container--medium { min-height: 680px; }
-    .hero-section__media-container--large { min-height: 820px; }
+    .hero-section__media-container--large { min-height: 840px; }
   }
 
   #Hero-{{ section.id }} .hero-section__media {
@@ -138,19 +171,24 @@
   #Hero-{{ section.id }} .hero-section__placeholder {
     width: 100%;
     height: 100%;
-    background: #1f2937;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.35;
+    overflow: hidden;
   }
 
   #Hero-{{ section.id }} .hero-section__overlay {
     position: absolute;
     inset: 0;
-    background-color: var(--overlay-color, #000000);
-    opacity: var(--overlay-opacity, 0.4);
+    background: linear-gradient(
+      180deg,
+      rgba(9, 10, 15, 0.25) 0%,
+      rgba(9, 10, 15, 0.55) 50%,
+      rgba(9, 10, 15, 0.85) 100%
+    );
+    opacity: var(--overlay-opacity, 0.45);
     z-index: 2;
+    pointer-events: none;
   }
 
   /* Split Layout */
@@ -190,43 +228,73 @@
   .hero-section__content-wrapper--h-right { align-items: flex-end; text-align: right; }
 
   .hero-section__content {
-    max-width: 680px;
-    padding: 2rem 0;
+    max-width: 760px;
+    padding: 2rem 1rem;
+    position: relative;
+    z-index: 4;
+  }
+
+  .hero-section__content--card {
+    padding: 3rem 2.25rem;
+    border-radius: var(--radius-xl);
+    background: rgba(12, 13, 18, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
 
   .hero-section__subheading {
     display: inline-block;
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    color: #e2b170;
   }
 
   .hero-section__subheading--pill {
-    padding: 0.35rem 0.95rem;
+    padding: 0.4rem 1.15rem;
     border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(226, 177, 112, 0.35);
+    color: #fce7cf;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .hero-section__title {
     margin: 0 0 1.25rem 0;
-    line-height: 1.1;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: #ffffff;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
   }
 
-  .hero-section__title--sm { font-size: clamp(2rem, 4vw, 2.75rem); }
-  .hero-section__title--md { font-size: clamp(2.5rem, 5vw, 3.75rem); }
-  .hero-section__title--lg { font-size: clamp(3rem, 7vw, 4.75rem); }
-  .hero-section__title--xl { font-size: clamp(3.5rem, 8.5vw, 5.75rem); }
+  .hero-section__title--sm { font-size: clamp(1.65rem, 2.8vw, 2.25rem); }
+  .hero-section__title--md { font-size: clamp(2rem, 3.8vw, 2.85rem); }
+  .hero-section__title--lg { font-size: clamp(2.35rem, 4.8vw, 3.5rem); }
+  .hero-section__title--xl { font-size: clamp(2.75rem, 5.8vw, 4.25rem); }
 
   .hero-section__text {
-    font-size: clamp(1rem, 1.35vw, 1.25rem);
-    line-height: 1.6;
-    margin-bottom: 2rem;
-    opacity: 0.92;
+    font-size: clamp(0.95rem, 1.2vw, 1.125rem);
+    line-height: 1.65;
+    margin-bottom: 2.25rem;
+    color: rgba(255, 255, 255, 0.9) !important;
+    max-width: 620px;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .hero-section__content-wrapper--h-center .hero-section__text {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-section__text p {
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin: 0;
   }
 
   .hero-section__actions {
@@ -360,6 +428,12 @@
       "id": "text",
       "label": "Description",
       "default": "<p>Experience timeless designs crafted from sustainable, ultra-fine materials designed for comfort and modern life.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_card",
+      "label": "Display content inside frosted glass card",
+      "default": false
     },
     {
       "type": "header",

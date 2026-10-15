@@ -35,7 +35,11 @@
                     alt: block.settings.text | default: 'Brand partner logo' | escape
                   }}
                 {%- else -%}
-                  <span class="logo-list__text-badge">{{ block.settings.text | default: 'PARTNER' }}</span>
+                  <div class="logo-list__brand-card">
+                    <span class="logo-list__brand-name logo-list__brand-name--{{ block.settings.text | handleize }}">
+                      {{ block.settings.text | default: 'PARTNER' }}
+                    </span>
+                  </div>
                 {%- endif -%}
               {%- if block.settings.link != blank -%}</a>{%- endif -%}
             </div>
@@ -52,7 +56,11 @@
                     alt: block.settings.text | default: 'Brand partner logo' | escape
                   }}
                 {%- else -%}
-                  <span class="logo-list__text-badge">{{ block.settings.text | default: 'PARTNER' }}</span>
+                  <div class="logo-list__brand-card">
+                    <span class="logo-list__brand-name logo-list__brand-name--{{ block.settings.text | handleize }}">
+                      {{ block.settings.text | default: 'PARTNER' }}
+                    </span>
+                  </div>
                 {%- endif -%}
               {%- if block.settings.link != blank -%}</a>{%- endif -%}
             </div>
@@ -71,7 +79,11 @@
                   alt: block.settings.text | default: 'Brand partner logo' | escape
                 }}
               {%- else -%}
-                <span class="logo-list__text-badge">{{ block.settings.text | default: 'PARTNER' }}</span>
+                <div class="logo-list__brand-card">
+                  <span class="logo-list__brand-name logo-list__brand-name--{{ block.settings.text | handleize }}">
+                    {{ block.settings.text | default: 'PARTNER' }}
+                  </span>
+                </div>
               {%- endif -%}
             {%- if block.settings.link != blank -%}</a>{%- endif -%}
           </div>
@@ -84,14 +96,16 @@
 
 <style>
   #LogoList-{{ section.id }} {
-    padding-top: {{ section.settings.padding_top_mobile | default: 30 }}px;
-    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 30 }}px;
+    padding-top: {{ section.settings.padding_top_mobile | default: 35 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 35 }}px;
+    border-top: 1px solid var(--color-border, #edebe6);
+    border-bottom: 1px solid var(--color-border, #edebe6);
   }
 
   @media (min-width: 768px) {
     #LogoList-{{ section.id }} {
-      padding-top: {{ section.settings.padding_top_desktop | default: 50 }}px;
-      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 50 }}px;
+      padding-top: {{ section.settings.padding_top_desktop | default: 55 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 55 }}px;
     }
   }
 
@@ -119,7 +133,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 1.25rem;
+    padding: 0.85rem 1.5rem;
   }
 
   .logo-list__img {
@@ -132,27 +146,82 @@
 
   .logo-list--grayscale .logo-list__img {
     filter: grayscale(100%);
-    opacity: 0.6;
+    opacity: 0.65;
   }
 
   .logo-list--grayscale .logo-list__item:hover .logo-list__img {
     filter: grayscale(0%);
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 
-  .logo-list__text-badge {
-    font-size: 1.15rem;
-    font-weight: 800;
-    letter-spacing: 0.15em;
+  .logo-list__brand-card {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 2rem;
+    background: var(--color-card-bg, #ffffff);
+    border: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+    border-radius: var(--radius-full);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    min-height: 48px;
+  }
+
+  .logo-list__item:hover .logo-list__brand-card {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .logo-list__brand-name {
+    font-family: Didot, "Playfair Display", "Bodoni MT", Georgia, serif;
+    font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+    letter-spacing: 0.18em;
+    font-weight: 700;
     text-transform: uppercase;
     color: var(--color-heading, #111827);
-    opacity: 0.65;
-    transition: opacity 0.2s ease;
+    opacity: 0.85;
+    white-space: nowrap;
+    transition: opacity 0.25s ease;
   }
 
-  .logo-list__item:hover .logo-list__text-badge {
+  .logo-list__item:hover .logo-list__brand-name {
     opacity: 1;
+  }
+
+  .logo-list__brand-name--vogue {
+    font-family: "Bodoni MT", Didot, serif;
+    letter-spacing: 0.24em;
+    font-weight: 800;
+  }
+
+  .logo-list__brand-name--gq {
+    font-family: "Plus Jakarta Sans", -apple-system, sans-serif;
+    letter-spacing: 0.08em;
+    font-weight: 900;
+    font-size: 1.25rem;
+  }
+
+  .logo-list__brand-name--elle {
+    font-family: Didot, serif;
+    letter-spacing: 0.34em;
+    font-weight: 700;
+  }
+
+  .logo-list__brand-name--forbes {
+    font-family: Georgia, serif;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+    font-style: italic;
+  }
+
+  .logo-list__brand-name--harpers-bazaar,
+  .logo-list__brand-name--harper-s-bazaar {
+    font-family: Didot, serif;
+    letter-spacing: 0.16em;
+    font-size: 0.95rem;
+    font-weight: 700;
   }
 
   .logo-list__link {

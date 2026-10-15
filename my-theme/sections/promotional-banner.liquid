@@ -80,10 +80,13 @@
 
   .promo-banner__box {
     border-radius: var(--radius-xl);
-    padding: 3.5rem 2rem;
+    padding: 4.5rem 2.5rem;
     position: relative;
     overflow: hidden;
-    background: inherit;
+    background: radial-gradient(circle at 50% 15%, #18223c 0%, #080c16 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45);
+    color: #ffffff;
   }
 
   .promo-banner__content {
@@ -106,20 +109,21 @@
 
   .promo-banner__title {
     margin: 0 0 1rem 0;
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: #ffffff;
   }
 
-  .promo-banner__title--sm { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
-  .promo-banner__title--md { font-size: clamp(2.25rem, 4.5vw, 3.25rem); }
-  .promo-banner__title--lg { font-size: clamp(2.75rem, 6vw, 4.25rem); }
+  .promo-banner__title--sm { font-size: clamp(1.35rem, 2.2vw, 1.75rem); }
+  .promo-banner__title--md { font-size: clamp(1.65rem, 3vw, 2.25rem); }
+  .promo-banner__title--lg { font-size: clamp(2rem, 3.8vw, 2.75rem); }
 
   .promo-banner__text {
-    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    font-size: clamp(0.95rem, 1.2vw, 1.125rem);
     line-height: 1.6;
     margin-bottom: 2rem;
-    opacity: 0.9;
+    color: #cbd5e1;
   }
 
   .promo-banner__actions {
@@ -128,20 +132,21 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 1.25rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
   }
 
   .promo-banner__coupon {
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
-    padding: 0.4rem 0.5rem 0.4rem 1rem;
+    padding: 0.45rem 0.65rem 0.45rem 1.15rem;
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    border: 1px dashed rgba(255, 255, 255, 0.4);
-    font-size: 0.9rem;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px dashed rgba(255, 255, 255, 0.35);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
   }
 
   .promo-banner__coupon-btn {
