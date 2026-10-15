@@ -6,5 +6,32 @@
     "theme_author": "Sumit",
     "theme_documentation_url": "https://example.com",
     "theme_support_url": "https://example.com"
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart type",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Drawer"
+          },
+          {
+            "value": "page",
+            "label": "Page"
+          }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_auto_open",
+        "label": "Open cart drawer automatically after adding an item",
+        "default": true
+      }
+    ]
   }
 ]

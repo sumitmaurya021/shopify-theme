@@ -1,7 +1,10 @@
 {% comment %}
-  Renders an individual upsell product card inside the cart drawer.
-  Accepts:
-  - product: Shopify Product object
+  PREMIUM CART UPSELL CARD SNIPPET
+  Features:
+  - Auto-hides if product or any of its variants is already in cart
+  - Direct 1-click addition for single-variant items
+  - Seamless in-drawer variant selector for multi-variant items
+  - Real-time price display, compare-at savings, and loading feedback
 {% endcomment %}
 
 {%- liquid
@@ -17,12 +20,13 @@
 {%- unless is_in_cart or product.available == false -%}
   <div class="cart-upsell-card" data-upsell-id="{{ product.id }}">
     <div class="cart-upsell-card__media">
-      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true" class="cart-upsell-card__image-link">
         {%- if product.featured_image != blank -%}
           {{ product.featured_image | image_url: width: 160 | image_tag:
             class: 'cart-upsell-card__image',
             loading: 'lazy',
-            alt: product.title | escape
+            widths: '80, 120, 160',
+            alt: product.featured_image.alt | default: product.title | escape
           }}
         {%- else -%}
           <div class="cart-upsell-card__placeholder">
@@ -37,7 +41,7 @@
         <a href="{{ product.url }}">{{ product.title | escape }}</a>
       </h5>
 
-      <div class="cart-upsell-card__price">
+      <div class="cart-upsell-card__price" data-upsell-price-wrap>
         {%- if product.compare_at_price > product.price -%}
           <s class="cart-upsell-card__compare-price">{{ product.compare_at_price | money }}</s>
         {%- endif -%}
@@ -58,9 +62,38 @@
             </span>
           </button>
         {%- else -%}
-          <a href="{{ product.url }}" class="cart-upsell-card__btn cart-upsell-card__btn--select">
-            Choose Options
-          </a>
+          <div class="cart-upsell-card__variant-group">
+            <select 
+              class="cart-upsell-card__select" 
+              data-upsell-variant-select 
+              aria-label="Select option for {{ product.title | escape }}"
+            >
+              {%- for variant in product.variants -%}
+                {%- if variant.available -%}
+                  <option 
+                    value="{{ variant.id }}" 
+                    data-price="{{ variant.price | money }}"
+                    data-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
+                    {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+                  >
+                    {{ variant.title }}
+                  </option>
+                {%- endif -%}
+              {%- endfor -%}
+            </select>
+
+            <button 
+              type="button" 
+              class="cart-upsell-card__btn" 
+              data-upsell-add="{{ product.selected_or_first_available_variant.id }}"
+              aria-label="Add {{ product.title | escape }} to cart"
+            >
+              <span>+ Add</span>
+              <span class="cart-upsell-card__spinner" hidden>
+                {% render 'icon-header', name: 'spinner', class: 'icon-spinner animate-spin' %}
+              </span>
+            </button>
+          </div>
         {%- endif -%}
       </div>
     </div>

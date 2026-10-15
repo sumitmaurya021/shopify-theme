@@ -565,13 +565,18 @@
 }
 
 .cart-drawer__empty-icon {
-  width: 64px;
-  height: 64px;
-  color: #d1d5db;
-  margin-bottom: 1rem;
+  width: 72px;
+  height: 72px;
+  color: #9ca3af;
+  margin-bottom: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.cart-drawer__empty-icon svg {
+  width: 52px;
+  height: 52px;
 }
 
 .cart-drawer__empty-title {
@@ -730,6 +735,190 @@
 
 .cart-drawer__view-cart-btn:hover {
   color: #111827;
+}
+
+/* ==========================================================================
+   ENHANCED CART CONVERSION & TRUST FEATURES
+   ========================================================================== */
+/* Unlocked celebration progress bar */
+.cart-shipping-bar.is-unlocked .cart-shipping-bar__fill {
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.cart-shipping-bar__success {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #059669;
+}
+
+/* Inline Error Banner */
+.cart-drawer__error-banner {
+  margin: 0.75rem 1.5rem 0;
+  padding: 0.75rem 1rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.825rem;
+  color: #dc2626;
+  animation: fadeInError 0.2s ease;
+}
+
+.cart-drawer__error-banner[hidden] {
+  display: none !important;
+}
+
+@keyframes fadeInError {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cart-drawer__error-close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #dc2626;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+/* Multi-variant upsell selector */
+.cart-upsell-card__variant-group {
+  display: flex;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.cart-upsell-card__select {
+  flex: 1;
+  min-width: 0;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.775rem;
+  background-color: #ffffff;
+  outline: none;
+  cursor: pointer;
+}
+
+.cart-upsell-card__select:focus {
+  border-color: #111827;
+}
+
+/* Accordions (Notes & Discounts) */
+.cart-drawer__accordions {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cart-drawer__accordion {
+  border: 1px solid var(--cart-drawer-border, #f3f4f6);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fafafa;
+}
+
+.cart-drawer__accordion-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  list-style: none;
+}
+
+.cart-drawer__accordion-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.cart-drawer__accordion[open] .cart-drawer__accordion-toggle svg {
+  transform: rotate(180deg);
+}
+
+.cart-drawer__accordion-content {
+  padding: 0 1rem 0.85rem;
+}
+
+.cart-drawer__discount-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cart-drawer__discount-input {
+  flex: 1;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  outline: none;
+}
+
+.cart-drawer__discount-input:focus {
+  border-color: #111827;
+}
+
+.btn--applied {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+}
+
+.cart-drawer__discount-notice {
+  font-size: 0.725rem;
+  color: #6b7280;
+  margin: 0.45rem 0 0;
+}
+
+/* Trust Badges in Drawer */
+.cart-drawer__trust-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--cart-drawer-border, #f3f4f6);
+  margin-top: 0.75rem;
+}
+
+.cart-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  justify-content: center;
+}
+
+.cart-trust-item svg {
+  color: #10b981;
+}
+
+/* Empty Cart Recommendations */
+.cart-drawer__empty-recommendations {
+  margin-top: 2rem;
+  width: 100%;
+  text-align: left;
+}
+
+.cart-drawer__empty-rec-title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  margin-bottom: 0.85rem;
 }
 
 /* ==========================================================================

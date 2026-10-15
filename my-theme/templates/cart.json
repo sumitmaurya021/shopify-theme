@@ -3,7 +3,11 @@
     "main": {
       "type": "main-cart",
       "settings": {
-        "show_cart_note": true
+        "enable_free_shipping": true,
+        "free_shipping_threshold": 75,
+        "free_shipping_success_text": "Congratulations! You unlocked Free Shipping!",
+        "show_cart_note": true,
+        "show_trust_badges": true
       }
     }
   },
