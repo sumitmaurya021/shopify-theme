@@ -1,0 +1,28 @@
+{% layout none %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gift Card - {{ shop.name }}</title>
+  {{ content_for_header }}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+</head>
+<body class="gift-card">
+  <main class="gift-card__content" style="text-align: center; padding: 3rem 1rem;">
+    <h1>{{ shop.name }}</h1>
+    <h2>Here's your gift card!</h2>
+    <div class="gift-card__value">
+      {%- if gift_card.enabled == false or gift_card.expired -%}
+        <p>This gift card is expired or inactive.</p>
+      {%- else -%}
+        <p style="font-size: 1.5rem; font-weight: bold;">{{ gift_card.initial_value | money }}</p>
+      {%- endif -%}
+    </div>
+    <div class="gift-card__code" style="margin: 1.5rem 0; font-size: 1.5rem; letter-spacing: 2px;">
+      <code>{{ gift_card.code | format_code }}</code>
+    </div>
+    <a href="{{ shop.url }}" style="display: inline-block; padding: 0.75rem 1.5rem; background: #111827; color: #ffffff; border-radius: 6px; text-decoration: none;">Start shopping</a>
+  </main>
+</body>
+</html>
