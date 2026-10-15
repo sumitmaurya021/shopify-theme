@@ -3,7 +3,7 @@
   Renders a curated product grid on the homepage with quick-add support.
 {% endcomment %}
 
-<div class="featured-collection page-width" id="FeaturedCollection-{{ section.id }}">
+<div class="featured-collection page-width {{ section.settings.color_scheme | default: 'color-scheme-1' }}" id="FeaturedCollection-{{ section.id }}">
   <div class="featured-collection__header text-center">
     {%- if section.settings.subheading != blank -%}
       <span class="featured-collection__subheading">{{ section.settings.subheading | escape }}</span>
@@ -176,6 +176,41 @@
       "id": "show_view_all",
       "label": "Show 'View All' button",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style & Spacing"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "color-scheme-1", "label": "Clean White" },
+        { "value": "color-scheme-2", "label": "Soft Warm" },
+        { "value": "color-scheme-3", "label": "Muted Slate" }
+      ],
+      "default": "color-scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 80
     }
   ],
   "presets": [

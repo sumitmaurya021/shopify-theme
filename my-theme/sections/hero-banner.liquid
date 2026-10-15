@@ -1,0 +1,511 @@
+{% comment %}
+  PREMIUM HERO BANNER
+  High-conversion hero section supporting Full-width Overlay, Split 50/50, and Contained Editorial layouts.
+{% endcomment %}
+
+{%- liquid
+  assign layout_style = section.settings.layout_style | default: 'overlay'
+  assign banner_height = section.settings.banner_height | default: 'medium'
+  assign text_align = section.settings.text_alignment | default: 'center'
+  assign vertical_align = section.settings.vertical_alignment | default: 'middle'
+  assign overlay_opacity = section.settings.overlay_opacity | default: 40
+  assign color_scheme = section.settings.color_scheme | default: 'color-scheme-4'
+-%}
+
+<div class="hero-section hero-section--{{ layout_style }} {{ color_scheme }}" id="Hero-{{ section.id }}">
+  <div class="hero-section__inner{% if layout_style == 'contained' %} section-container section-container--standard{% endif %}">
+    
+    <div class="hero-section__media-container hero-section__media-container--{{ banner_height }}">
+      {%- if section.settings.image != blank -%}
+        <picture>
+          {%- if section.settings.mobile_image != blank -%}
+            <source media="(max-width: 767px)" srcset="{{ section.settings.mobile_image | image_url: width: 800 }}">
+          {%- endif -%}
+          {{ section.settings.image | image_url: width: 2200 | image_tag:
+            class: 'hero-section__media',
+            loading: 'eager',
+            widths: '600, 900, 1200, 1600, 2000, 2400',
+            alt: section.settings.heading | default: shop.name | escape
+          }}
+        </picture>
+      {%- else -%}
+        <div class="hero-section__placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+
+      {%- if layout_style == 'overlay' or layout_style == 'contained' -%}
+        <div class="hero-section__overlay" style="--overlay-opacity: {{ overlay_opacity | divided_by: 100.0 }}; --overlay-color: {{ section.settings.overlay_color | default: '#000000' }};"></div>
+      {%- endif -%}
+    </div>
+
+    <div class="hero-section__content-wrapper section-container section-container--standard hero-section__content-wrapper--v-{{ vertical_align }} hero-section__content-wrapper--h-{{ text_align }}">
+      <div class="hero-section__content">
+        {%- if section.settings.subheading != blank -%}
+          <span class="hero-section__subheading{% if section.settings.subheading_pill %} hero-section__subheading--pill{% endif %}">
+            {{ section.settings.subheading | escape }}
+          </span>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h1 class="hero-section__title hero-section__title--{{ section.settings.heading_size | default: 'lg' }}">
+            {{ section.settings.heading | escape }}
+          </h1>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="hero-section__text rte">
+            {{ section.settings.text }}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.button_1_label != blank or section.settings.button_2_label != blank -%}
+          <div class="hero-section__actions">
+            {%- if section.settings.button_1_label != blank -%}
+              <a href="{{ section.settings.button_1_link | default: routes.all_products_collection_url }}" class="btn btn--{{ section.settings.button_1_style | default: 'primary' }} btn--lg">
+                {{ section.settings.button_1_label | escape }}
+              </a>
+            {%- endif -%}
+
+            {%- if section.settings.button_2_label != blank -%}
+              <a href="{{ section.settings.button_2_link | default: routes.all_products_collection_url }}" class="btn btn--{{ section.settings.button_2_style | default: 'outline' }} btn--lg">
+                {{ section.settings.button_2_label | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  #Hero-{{ section.id }} {
+    position: relative;
+    padding-top: {{ section.settings.padding_top_mobile | default: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 0 }}px;
+  }
+
+  @media (min-width: 768px) {
+    #Hero-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop | default: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 0 }}px;
+    }
+  }
+
+  #Hero-{{ section.id }} .hero-section__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Overlay Layout Styles */
+  #Hero-{{ section.id }}.hero-section--overlay .hero-section__media-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  #Hero-{{ section.id }}.hero-section--overlay .hero-section__content-wrapper {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Height Presets */
+  .hero-section__media-container--small { min-height: 440px; }
+  .hero-section__media-container--medium { min-height: 580px; }
+  .hero-section__media-container--large { min-height: 720px; }
+  .hero-section__media-container--fullscreen { min-height: calc(100vh - var(--header-actual-height, 80px)); }
+
+  @media (min-width: 768px) {
+    .hero-section__media-container--small { min-height: 500px; }
+    .hero-section__media-container--medium { min-height: 680px; }
+    .hero-section__media-container--large { min-height: 820px; }
+  }
+
+  #Hero-{{ section.id }} .hero-section__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ section.settings.image_focal_point | default: 'center' }};
+  }
+
+  #Hero-{{ section.id }} .hero-section__placeholder {
+    width: 100%;
+    height: 100%;
+    background: #1f2937;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.35;
+  }
+
+  #Hero-{{ section.id }} .hero-section__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--overlay-color, #000000);
+    opacity: var(--overlay-opacity, 0.4);
+    z-index: 2;
+  }
+
+  /* Split Layout */
+  #Hero-{{ section.id }}.hero-section--split .hero-section__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 900px) {
+    #Hero-{{ section.id }}.hero-section--split .hero-section__inner {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      min-height: 600px;
+    }
+
+    #Hero-{{ section.id }}.hero-section--split.hero-section--split-reverse .hero-section__inner {
+      direction: rtl;
+    }
+
+    #Hero-{{ section.id }}.hero-section--split.hero-section--split-reverse .hero-section__content {
+      direction: ltr;
+    }
+  }
+
+  #Hero-{{ section.id }}.hero-section--split .hero-section__content-wrapper {
+    padding: 3.5rem 1.5rem;
+    z-index: 2;
+  }
+
+  /* Alignments */
+  .hero-section__content-wrapper--v-top { justify-content: flex-start; padding-top: 5rem; }
+  .hero-section__content-wrapper--v-middle { justify-content: center; }
+  .hero-section__content-wrapper--v-bottom { justify-content: flex-end; padding-bottom: 5rem; }
+
+  .hero-section__content-wrapper--h-left { align-items: flex-start; text-align: left; }
+  .hero-section__content-wrapper--h-center { align-items: center; text-align: center; }
+  .hero-section__content-wrapper--h-right { align-items: flex-end; text-align: right; }
+
+  .hero-section__content {
+    max-width: 680px;
+    padding: 2rem 0;
+  }
+
+  .hero-section__subheading {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .hero-section__subheading--pill {
+    padding: 0.35rem 0.95rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+  }
+
+  .hero-section__title {
+    margin: 0 0 1.25rem 0;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-section__title--sm { font-size: clamp(2rem, 4vw, 2.75rem); }
+  .hero-section__title--md { font-size: clamp(2.5rem, 5vw, 3.75rem); }
+  .hero-section__title--lg { font-size: clamp(3rem, 7vw, 4.75rem); }
+  .hero-section__title--xl { font-size: clamp(3.5rem, 8.5vw, 5.75rem); }
+
+  .hero-section__text {
+    font-size: clamp(1rem, 1.35vw, 1.25rem);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.92;
+  }
+
+  .hero-section__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .hero-section__content-wrapper--h-center .hero-section__actions {
+    justify-content: center;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "class": "shopify-section-hero-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        { "value": "overlay", "label": "Full-width Overlay" },
+        { "value": "split", "label": "Split Media & Text" },
+        { "value": "contained", "label": "Contained Boxed Banner" }
+      ],
+      "default": "overlay"
+    },
+    {
+      "type": "select",
+      "id": "banner_height",
+      "label": "Banner height",
+      "options": [
+        { "value": "small", "label": "Small (480px)" },
+        { "value": "medium", "label": "Medium (620px)" },
+        { "value": "large", "label": "Large (780px)" },
+        { "value": "fullscreen", "label": "Full Screen (100vh)" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical alignment",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "middle", "label": "Middle" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "middle"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "select",
+      "id": "image_focal_point",
+      "label": "Image focal point",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading / Eyebrow",
+      "default": "New Arrivals 2026"
+    },
+    {
+      "type": "checkbox",
+      "id": "subheading_pill",
+      "label": "Display subheading as pill badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Elevate Your Everyday Style"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" },
+        { "value": "xl", "label": "Extra Large" }
+      ],
+      "default": "lg"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Experience timeless designs crafted from sustainable, ultra-fine materials designed for comfort and modern life.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Primary Button"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Button 1 label",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 link"
+    },
+    {
+      "type": "select",
+      "id": "button_1_style",
+      "label": "Button 1 style",
+      "options": [
+        { "value": "primary", "label": "Primary Solid" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "white", "label": "White Solid" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "header",
+      "content": "Secondary Button"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Button 2 label",
+      "default": "View Lookbook"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 link"
+    },
+    {
+      "type": "select",
+      "id": "button_2_style",
+      "label": "Button 2 style",
+      "options": [
+        { "value": "primary", "label": "Primary Solid" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "white", "label": "White Solid" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "header",
+      "content": "Style & Colors"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "color-scheme-1", "label": "Clean White" },
+        { "value": "color-scheme-2", "label": "Soft Warm" },
+        { "value": "color-scheme-4", "label": "Deep Charcoal" },
+        { "value": "color-scheme-5", "label": "Onyx Black" },
+        { "value": "color-scheme-accent", "label": "Brand Accent" }
+      ],
+      "default": "color-scheme-4"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay tint color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 35
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner",
+      "settings": {
+        "layout_style": "overlay",
+        "banner_height": "medium",
+        "subheading": "Curated Excellence",
+        "heading": "Crafted For The Modern Aesthetic",
+        "text": "<p>Discover the new collection defined by meticulous attention to detail, conscious fabrication, and enduring design.</p>",
+        "button_1_label": "Shop New Arrivals",
+        "button_2_label": "Our Story"
+      }
+    }
+  ]
+}
+{% endschema %}

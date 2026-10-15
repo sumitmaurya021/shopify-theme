@@ -1,0 +1,330 @@
+{% comment %}
+  PREMIUM PROMOTIONAL & CAMPAIGN BANNER
+  High-conversion campaign section with 1-click coupon code copy button and primary CTA.
+{% endcomment %}
+
+{%- liquid
+  assign color_scheme = section.settings.color_scheme | default: 'color-scheme-accent'
+-%}
+
+<div class="promo-banner {{ color_scheme }}" id="PromoBanner-{{ section.id }}">
+  <div class="section-container section-container--{{ section.settings.section_width | default: 'standard' }}">
+    
+    <div class="promo-banner__box">
+      <div class="promo-banner__content text-center">
+        {%- if section.settings.badge_text != blank -%}
+          <span class="promo-banner__badge badge badge--sale">
+            {% render 'icon-library', icon: 'sparkle', class: 'promo-banner__badge-icon' %}
+            {{ section.settings.badge_text | escape }}
+          </span>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h2 class="promo-banner__title promo-banner__title--{{ section.settings.heading_size | default: 'md' }}">
+            {{ section.settings.heading | escape }}
+          </h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="promo-banner__text rte">
+            {{ section.settings.text }}
+          </div>
+        {%- endif -%}
+
+        <div class="promo-banner__actions">
+          {%- if section.settings.coupon_code != blank -%}
+            <div class="promo-banner__coupon">
+              <span class="promo-banner__coupon-label">Code:</span>
+              <button 
+                type="button" 
+                class="promo-banner__coupon-btn" 
+                data-copy-code="{{ section.settings.coupon_code | escape }}"
+                title="Click to copy coupon code"
+              >
+                <span>{{ section.settings.coupon_code | escape }}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.button_label != blank -%}
+            <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" class="btn btn--{{ section.settings.button_style | default: 'white' }} btn--lg">
+              {{ section.settings.button_label | escape }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.disclaimer != blank -%}
+          <p class="promo-banner__disclaimer">
+            {{ section.settings.disclaimer | escape }}
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  #PromoBanner-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 40 }}px;
+  }
+
+  @media (min-width: 768px) {
+    #PromoBanner-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop | default: 60 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 60 }}px;
+    }
+  }
+
+  .promo-banner__box {
+    border-radius: var(--radius-xl);
+    padding: 3.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    background: inherit;
+  }
+
+  .promo-banner__content {
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .promo-banner__badge {
+    margin-bottom: 1.25rem;
+    padding: 0.45rem 1.15rem;
+    font-size: 0.85rem;
+  }
+
+  .promo-banner__badge-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .promo-banner__title {
+    margin: 0 0 1rem 0;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+
+  .promo-banner__title--sm { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
+  .promo-banner__title--md { font-size: clamp(2.25rem, 4.5vw, 3.25rem); }
+  .promo-banner__title--lg { font-size: clamp(2.75rem, 6vw, 4.25rem); }
+
+  .promo-banner__text {
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .promo-banner__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .promo-banner__coupon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.4rem 0.5rem 0.4rem 1rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px dashed rgba(255, 255, 255, 0.4);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .promo-banner__coupon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.95rem;
+    background: #ffffff;
+    color: #111827;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .promo-banner__coupon-btn:hover {
+    background: #f3f4f6;
+    transform: scale(1.02);
+  }
+
+  .promo-banner__coupon-btn.is-copied {
+    background: #10b981;
+    color: #ffffff;
+  }
+
+  .promo-banner__disclaimer {
+    margin: 0;
+    font-size: 0.775rem;
+    opacity: 0.7;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Promotional banner",
+  "class": "shopify-section-promo-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Campaign Details"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Promotion badge",
+      "default": "Private Access Special"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Enjoy 20% Off Your Curated Capsule"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Unlock exclusive promotional savings across our entire winter edit. Available for a limited time only.</p>"
+    },
+    {
+      "type": "text",
+      "id": "coupon_code",
+      "label": "Coupon code to copy",
+      "default": "EXCLUSIVE20"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "CTA button label",
+      "default": "Shop The Private Sale"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "CTA button link"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "CTA button style",
+      "options": [
+        { "value": "white", "label": "White Solid" },
+        { "value": "primary", "label": "Black Solid" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "text",
+      "id": "disclaimer",
+      "label": "Terms / Disclaimer note",
+      "default": "Offer cannot be combined with existing promotions. Applied at checkout."
+    },
+    {
+      "type": "header",
+      "content": "Style & Spacing"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Container width",
+      "options": [
+        { "value": "standard", "label": "Standard (1240px)" },
+        { "value": "wide", "label": "Wide (1440px)" }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "color-scheme-accent", "label": "Brand Accent" },
+        { "value": "color-scheme-4", "label": "Deep Charcoal" },
+        { "value": "color-scheme-5", "label": "Onyx Black" }
+      ],
+      "default": "color-scheme-accent"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotional banner",
+      "settings": {
+        "badge_text": "Exclusive Welcome Offer",
+        "heading": "Take 15% Off Your First Purchase",
+        "coupon_code": "WELCOME15"
+      }
+    }
+  ]
+}
+{% endschema %}

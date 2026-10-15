@@ -1,0 +1,488 @@
+{% comment %}
+  PREMIUM HERO SLIDESHOW
+  High-converting multi-slide hero carousel with autoplay, touch swipe, customizable slide blocks, and accessible controls.
+{% endcomment %}
+
+{%- liquid
+  assign slider_height = section.settings.slide_height | default: 'medium'
+  assign autoplay = section.settings.autoplay | default: false
+  assign speed = section.settings.speed | default: 5 | times: 1000
+-%}
+
+<div 
+  class="slideshow-section" 
+  id="Slideshow-{{ section.id }}"
+  data-slideshow
+  data-autoplay="{{ autoplay }}"
+  data-speed="{{ speed }}"
+>
+  <div class="slideshow__viewport slideshow__viewport--{{ slider_height }}">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign text_align = block.settings.text_alignment | default: 'center'
+        assign vertical_align = block.settings.vertical_alignment | default: 'middle'
+        assign overlay_opacity = block.settings.overlay_opacity | default: 35 | divided_by: 100.0
+      -%}
+
+      <div 
+        class="slideshow__slide{% if forloop.first %} is-active{% endif %}" 
+        id="Slide-{{ block.id }}"
+        {{ block.shopify_attributes }}
+        role="group"
+        aria-roledescription="slide"
+        aria-label="Slide {{ forloop.index }} of {{ section.blocks.size }}"
+        aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
+      >
+        <div class="slideshow__media-container">
+          {%- if block.settings.image != blank -%}
+            <picture>
+              {%- if block.settings.mobile_image != blank -%}
+                <source media="(max-width: 767px)" srcset="{{ block.settings.mobile_image | image_url: width: 800 }}">
+              {%- endif -%}
+              {%- assign img_loading = 'lazy' -%}
+              {%- if forloop.first -%}{%- assign img_loading = 'eager' -%}{%- endif -%}
+              {{ block.settings.image | image_url: width: 2200 | image_tag:
+                class: 'slideshow__media',
+                loading: img_loading,
+                widths: '600, 900, 1200, 1600, 2000, 2400',
+                alt: block.settings.heading | default: shop.name | escape
+              }}
+            </picture>
+          {%- else -%}
+            <div class="slideshow__placeholder">
+              {%- assign placeholder_index = forloop.index | modulo: 2 | plus: 1 -%}
+              {{ 'lifestyle-' | append: placeholder_index | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {%- endif -%}
+
+          <div class="slideshow__overlay" style="--slide-overlay-opacity: {{ overlay_opacity }}; --slide-overlay-color: {{ block.settings.overlay_color | default: '#000000' }};"></div>
+        </div>
+
+        <div class="slideshow__content-wrapper section-container section-container--standard slideshow__content-wrapper--v-{{ vertical_align }} slideshow__content-wrapper--h-{{ text_align }}">
+          <div class="slideshow__content">
+            {%- if block.settings.subheading != blank -%}
+              <span class="slideshow__subheading">
+                {{ block.settings.subheading | escape }}
+              </span>
+            {%- endif -%}
+
+            {%- if block.settings.heading != blank -%}
+              <h2 class="slideshow__title slideshow__title--{{ block.settings.heading_size | default: 'lg' }}">
+                {{ block.settings.heading | escape }}
+              </h2>
+            {%- endif -%}
+
+            {%- if block.settings.text != blank -%}
+              <div class="slideshow__text rte">
+                {{ block.settings.text }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.button_label != blank -%}
+              <div class="slideshow__actions">
+                <a href="{{ block.settings.button_link | default: routes.all_products_collection_url }}" class="btn btn--{{ block.settings.button_style | default: 'white' }} btn--lg">
+                  {{ block.settings.button_label | escape }}
+                </a>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+
+    {%- if section.blocks.size > 1 -%}
+      {%- if section.settings.show_arrows -%}
+        <div class="slideshow__controls">
+          <button type="button" class="slideshow__nav-btn slideshow__nav-btn--prev" data-slide-prev aria-label="Previous Slide">
+            {% render 'icon-library', icon: 'arrow-left' %}
+          </button>
+          <button type="button" class="slideshow__nav-btn slideshow__nav-btn--next" data-slide-next aria-label="Next Slide">
+            {% render 'icon-library', icon: 'arrow-right' %}
+          </button>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_dots -%}
+        <div class="slideshow__dots" role="tablist" aria-label="Slideshow pagination">
+          {%- for block in section.blocks -%}
+            <button 
+              type="button" 
+              class="slideshow__dot{% if forloop.first %} is-active{% endif %}" 
+              data-slide-index="{{ forloop.index0 }}"
+              role="tab"
+              aria-label="Go to slide {{ forloop.index }}"
+              aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+            ></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  #Slideshow-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: #0a0a0c;
+  }
+
+  .slideshow__viewport {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .slideshow__viewport--small { min-height: 460px; }
+  .slideshow__viewport--medium { min-height: 600px; }
+  .slideshow__viewport--large { min-height: 750px; }
+  .slideshow__viewport--fullscreen { min-height: 100vh; }
+
+  @media (min-width: 768px) {
+    .slideshow__viewport--small { min-height: 520px; }
+    .slideshow__viewport--medium { min-height: 680px; }
+    .slideshow__viewport--large { min-height: 840px; }
+  }
+
+  .slideshow__slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scale(1.02);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slideshow__slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+    z-index: 2;
+  }
+
+  .slideshow__media-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .slideshow__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .slideshow__placeholder {
+    width: 100%;
+    height: 100%;
+    background: #1f2937;
+    opacity: 0.35;
+  }
+
+  .slideshow__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--slide-overlay-color, #000000);
+    opacity: var(--slide-overlay-opacity, 0.35);
+  }
+
+  .slideshow__content-wrapper {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .slideshow__content-wrapper--v-top { justify-content: flex-start; padding-top: 5rem; }
+  .slideshow__content-wrapper--v-middle { justify-content: center; }
+  .slideshow__content-wrapper--v-bottom { justify-content: flex-end; padding-bottom: 5rem; }
+
+  .slideshow__content-wrapper--h-left { align-items: flex-start; text-align: left; }
+  .slideshow__content-wrapper--h-center { align-items: center; text-align: center; }
+  .slideshow__content-wrapper--h-right { align-items: flex-end; text-align: right; }
+
+  .slideshow__content {
+    max-width: 720px;
+    color: #ffffff;
+    padding: 2rem 0;
+  }
+
+  .slideshow__subheading {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding: 0.35rem 0.95rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(8px);
+  }
+
+  .slideshow__title {
+    margin: 0 0 1rem 0;
+    color: #ffffff;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .slideshow__title--sm { font-size: clamp(2rem, 3.5vw, 2.75rem); }
+  .slideshow__title--md { font-size: clamp(2.5rem, 5vw, 3.75rem); }
+  .slideshow__title--lg { font-size: clamp(3rem, 6.5vw, 4.5rem); }
+
+  .slideshow__text {
+    font-size: clamp(1rem, 1.35vw, 1.25rem);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #f3f4f6;
+  }
+
+  .slideshow__controls {
+    position: absolute;
+    inset-inline: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .slideshow__nav-btn {
+    pointer-events: auto;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .slideshow__nav-btn:hover {
+    background: #ffffff;
+    color: #111827;
+  }
+
+  .slideshow__dots {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.65rem;
+    z-index: 5;
+  }
+
+  .slideshow__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.25s ease;
+  }
+
+  .slideshow__dot.is-active {
+    width: 32px;
+    background: #ffffff;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Slideshow",
+  "class": "shopify-section-slideshow",
+  "settings": [
+    {
+      "type": "select",
+      "id": "slide_height",
+      "label": "Slideshow height",
+      "options": [
+        { "value": "small", "label": "Small (500px)" },
+        { "value": "medium", "label": "Medium (650px)" },
+        { "value": "large", "label": "Large (800px)" },
+        { "value": "fullscreen", "label": "Full Screen (100vh)" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-rotate slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Change slides every",
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show slide indicators",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Desktop image"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile image (optional)"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Autumn / Winter 2026"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Architectural Silhouettes & Refined Textures"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "options": [
+            { "value": "sm", "label": "Small" },
+            { "value": "md", "label": "Medium" },
+            { "value": "lg", "label": "Large" }
+          ],
+          "default": "lg"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Discover our newest collection of versatile essentials crafted for effortless elegance.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Discover Collection"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Button style",
+          "options": [
+            { "value": "white", "label": "White Solid" },
+            { "value": "primary", "label": "Black Solid" },
+            { "value": "outline", "label": "Outline" }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "select",
+          "id": "vertical_alignment",
+          "label": "Vertical alignment",
+          "options": [
+            { "value": "top", "label": "Top" },
+            { "value": "middle", "label": "Middle" },
+            { "value": "bottom", "label": "Bottom" }
+          ],
+          "default": "middle"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay color",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 90,
+          "step": 5,
+          "unit": "%",
+          "label": "Overlay opacity",
+          "default": 35
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slideshow",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "subheading": "New Signature Release",
+            "heading": "Artisanal Craftsmanship & Modern Luxury",
+            "text": "<p>Carefully tailored from organic, hand-spun fabrics designed to stand the test of time.</p>",
+            "button_label": "Shop The Capsule"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "subheading": "Sustainable Essentials",
+            "heading": "Conscious Design For Daily Living",
+            "text": "<p>Thoughtfully engineered with circular materials and minimal carbon footprint.</p>",
+            "button_label": "Learn More"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,315 @@
+{% comment %}
+  PREMIUM NEWSLETTER & AUDIENCE CAPTURE SECTION
+  Connects directly to Shopify customer database with tag 'newsletter'.
+{% endcomment %}
+
+{%- liquid
+  assign color_scheme = section.settings.color_scheme | default: 'color-scheme-2'
+-%}
+
+<div class="newsletter-section {{ color_scheme }}" id="Newsletter-{{ section.id }}">
+  <div class="section-container section-container--narrow">
+    
+    <div class="newsletter-section__box text-center">
+      {%- if section.settings.subheading != blank -%}
+        <span class="newsletter-section__subheading{% if section.settings.subheading_pill %} newsletter-section__subheading--pill{% endif %}">
+          {{ section.settings.subheading | escape }}
+        </span>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="newsletter-section__heading newsletter-section__heading--{{ section.settings.heading_size | default: 'md' }}">
+          {{ section.settings.heading | escape }}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="newsletter-section__text rte">
+          {{ section.settings.text }}
+        </div>
+      {%- endif -%}
+
+      {%- form 'customer', class: 'newsletter-form', id: 'NewsletterForm' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        {%- if form.posted_successfully? -%}
+          <div class="newsletter-form__success card-base card-base--bordered" role="status">
+            {% render 'icon-library', icon: 'check', class: 'newsletter-form__success-icon' %}
+            <span>Thank you for subscribing! Your welcome discount has been dispatched to your inbox.</span>
+          </div>
+        {%- else -%}
+          <div class="newsletter-form__input-group">
+            <label for="NewsletterEmail-{{ section.id }}" class="visually-hidden">Email address</label>
+            <input 
+              type="email" 
+              name="contact[email]" 
+              id="NewsletterEmail-{{ section.id }}" 
+              class="newsletter-form__input" 
+              placeholder="Enter your email address" 
+              required
+              autocomplete="email"
+              value="{{ form.email }}"
+            >
+            <button type="submit" class="btn btn--primary newsletter-form__btn">
+              {{ section.settings.button_label | default: 'Subscribe' | escape }}
+            </button>
+          </div>
+
+          {%- if form.errors -%}
+            <div class="newsletter-form__error" role="alert">
+              {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endform -%}
+
+      {%- if section.settings.privacy_text != blank -%}
+        <p class="newsletter-section__privacy">
+          {{ section.settings.privacy_text | escape }}
+        </p>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+<style>
+  #Newsletter-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 40 }}px;
+  }
+
+  @media (min-width: 768px) {
+    #Newsletter-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop | default: 80 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
+  .newsletter-section__box {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .newsletter-section__subheading {
+    display: inline-block;
+    font-size: 0.825rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-subtext, #6b7280);
+    margin-bottom: 0.85rem;
+  }
+
+  .newsletter-section__subheading--pill {
+    padding: 0.35rem 0.95rem;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .newsletter-section__heading {
+    margin: 0 0 1rem 0;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--color-heading, #111827);
+  }
+
+  .newsletter-section__heading--sm { font-size: clamp(1.5rem, 2.5vw, 2rem); }
+  .newsletter-section__heading--md { font-size: clamp(1.85rem, 3.5vw, 2.75rem); }
+  .newsletter-section__heading--lg { font-size: clamp(2.25rem, 4.5vw, 3.5rem); }
+
+  .newsletter-section__text {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--color-subtext, #4b5563);
+    margin-bottom: 2rem;
+  }
+
+  .newsletter-form__input-group {
+    display: flex;
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 639px) {
+    .newsletter-form__input-group {
+      flex-direction: column;
+    }
+  }
+
+  .newsletter-form__input {
+    flex: 1;
+    height: 52px;
+    padding: 0 1.25rem;
+    border: 1px solid var(--color-border, #d1d5db);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+    color: #111827;
+  }
+
+  .newsletter-form__input:focus {
+    outline: none;
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+  }
+
+  .newsletter-form__btn {
+    height: 52px;
+    white-space: nowrap;
+    padding: 0 2rem;
+  }
+
+  .newsletter-form__success {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background-color: #ecfdf5;
+    color: #065f46;
+    font-size: 0.925rem;
+    font-weight: 600;
+  }
+
+  .newsletter-form__success-icon {
+    width: 20px;
+    height: 20px;
+    color: #059669;
+    flex-shrink: 0;
+  }
+
+  .newsletter-form__error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+
+  .newsletter-section__privacy {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--color-subtext, #9ca3af);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "class": "shopify-section-newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Join The Inner Circle"
+    },
+    {
+      "type": "checkbox",
+      "id": "subheading_pill",
+      "label": "Display subheading as pill badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Be First To Know"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Subscribe to receive private preview invitations, seasonal lookbooks, and 10% off your inaugural order.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Join Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "privacy_text",
+      "label": "Privacy note",
+      "default": "We respect your privacy. Unsubscribe at any time with one click."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "color-scheme-1", "label": "Clean White" },
+        { "value": "color-scheme-2", "label": "Soft Warm" },
+        { "value": "color-scheme-3", "label": "Muted Slate" },
+        { "value": "color-scheme-4", "label": "Deep Charcoal" }
+      ],
+      "default": "color-scheme-2"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter",
+      "settings": {
+        "subheading": "Stay Connected",
+        "heading": "Subscribe & Receive 10% Off"
+      }
+    }
+  ]
+}
+{% endschema %}

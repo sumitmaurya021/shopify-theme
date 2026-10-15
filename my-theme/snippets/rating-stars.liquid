@@ -1,0 +1,19 @@
+{% comment %}
+  RATING STARS SNIPPET
+  Usage: {% render 'rating-stars', rating: 5, rating_count: 124, size: 'md' %}
+{% endcomment %}
+{%- assign current_rating = rating | default: 5 | round -%}
+{%- assign stars_size = size | default: 'md' -%}
+
+<div class="star-rating star-rating--{{ stars_size }}" aria-label="{{ rating | default: 5 }} out of 5 stars">
+  {%- for i in (1..5) -%}
+    {%- if i <= current_rating -%}
+      {% render 'icon-library', icon: 'star' %}
+    {%- else -%}
+      {% render 'icon-library', icon: 'star-empty' %}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if rating_count != blank -%}
+    <span class="star-rating__count" style="margin-left: 0.35rem; font-size: 0.85em; opacity: 0.75;">({{ rating_count }})</span>
+  {%- endif -%}
+</div>

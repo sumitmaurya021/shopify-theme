@@ -1,0 +1,456 @@
+{% comment %}
+  PREMIUM FEATURED PRODUCT SECTION
+  Full-featured hero conversion showcase for flagship products.
+{% endcomment %}
+
+{%- liquid
+  assign product = section.settings.product
+  assign color_scheme = section.settings.color_scheme | default: 'color-scheme-1'
+  assign first_variant = product.selected_or_first_available_variant | default: product.variants.first
+-%}
+
+<div class="featured-product {{ color_scheme }}" id="FeaturedProduct-{{ section.id }}">
+  <div class="section-container section-container--{{ section.settings.section_width | default: 'standard' }}">
+    
+    <div class="featured-product__grid">
+      
+      {%- comment -%} Product Gallery Column {%- endcomment -%}
+      <div class="featured-product__media-col">
+        <div class="featured-product__media-wrapper">
+          {%- if product.featured_media != blank -%}
+            {{ product.featured_media | image_url: width: 1200 | image_tag:
+              class: 'featured-product__image',
+              loading: 'lazy',
+              widths: '400, 600, 800, 1000, 1200',
+              alt: product.featured_media.alt | default: product.title | escape
+            }}
+          {%- else -%}
+            <div class="featured-product__placeholder">
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {%- endif -%}
+
+          {%- if product.compare_at_price > product.price -%}
+            {%- assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
+            <span class="badge badge--sale featured-product__badge">Save {{ discount }}%</span>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Product Info Column {%- endcomment -%}
+      <div class="featured-product__info-col">
+        <div class="featured-product__info">
+          {%- if section.settings.subheading != blank -%}
+            <span class="featured-product__eyebrow">{{ section.settings.subheading | escape }}</span>
+          {%- elsif product.vendor != blank -%}
+            <span class="featured-product__eyebrow">{{ product.vendor }}</span>
+          {%- endif -%}
+
+          <h2 class="featured-product__title">
+            {%- if product != blank -%}
+              <a href="{{ product.url }}">{{ product.title | escape }}</a>
+            {%- else -%}
+              The Signature Cashmere Overcoat
+            {%- endif -%}
+          </h2>
+
+          <div class="featured-product__rating">
+            {% render 'rating-stars', rating: 5, rating_count: 48, size: 'sm' %}
+            <span class="featured-product__stock-status">
+              {% render 'icon-library', icon: 'check', class: 'featured-product__stock-icon' %}
+              In Stock & Ready to Ship
+            </span>
+          </div>
+
+          <div class="featured-product__price-wrapper">
+            {%- if product != blank -%}
+              {% render 'price', product: product, price_class: 'featured-product__price' %}
+            {%- else -%}
+              <div class="price">
+                <span class="price-item price-item--sale">$240.00</span>
+                <s class="price-item price-item--regular" style="margin-left: 0.5rem; opacity: 0.6;">$320.00</s>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="featured-product__description rte">
+            {%- if product.description != blank -%}
+              {{ product.description | strip_html | truncatewords: 35 }}
+            {%- else -%}
+              <p>Meticulously tailored from double-faced pure wool and cashmere. Designed with a structured drape and hand-finished seams for an effortless silhouette.</p>
+            {%- endif -%}
+          </div>
+
+          {%- if product != blank -%}
+            <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="featured-product__form" data-product-form>
+              <input type="hidden" name="id" value="{{ first_variant.id }}">
+              
+              {%- unless product.has_only_default_variant -%}
+                <div class="featured-product__variants">
+                  {%- for option in product.options_with_values -%}
+                    <div class="featured-product__option">
+                      <label class="featured-product__option-label">
+                        {{ option.name }}: <span class="featured-product__option-selected">{{ option.selected_value | default: option.values.first }}</span>
+                      </label>
+                      <div class="featured-product__option-pills">
+                        {%- for value in option.values -%}
+                          <button type="button" class="featured-product__pill{% if forloop.first %} is-selected{% endif %}">
+                            {{ value }}
+                          </button>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </div>
+              {%- endunless -%}
+
+              <div class="featured-product__actions">
+                <div class="featured-product__qty">
+                  <label for="Quantity-{{ section.id }}" class="visually-hidden">Quantity</label>
+                  <input type="number" id="Quantity-{{ section.id }}" name="quantity" value="1" min="1" class="featured-product__qty-input">
+                </div>
+                <button type="submit" class="btn btn--primary btn--lg featured-product__add-btn" {% unless product.available %}disabled{% endunless %}>
+                  {%- if product.available -%}
+                    Add to Cart &bull; {{ product.price | money }}
+                  {%- else -%}
+                    Sold Out
+                  {%- endif -%}
+                </button>
+              </div>
+            </form>
+          {%- else -%}
+            <div class="featured-product__actions">
+              <a href="#" class="btn btn--primary btn--lg featured-product__add-btn">
+                Add to Cart &bull; $240.00
+              </a>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_details_link and product != blank -%}
+            <div class="featured-product__more-link">
+              <a href="{{ product.url }}">View Full Product Specifications &rarr;</a>
+            </div>
+          {%- endif -%}
+
+          <div class="featured-product__trust-strip">
+            <div class="featured-product__trust-item">
+              {% render 'icon-library', icon: 'truck' %}
+              <span>Free Express Delivery</span>
+            </div>
+            <div class="featured-product__trust-item">
+              {% render 'icon-library', icon: 'refresh-cw' %}
+              <span>30-Day Hassle-Free Returns</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<style>
+  #FeaturedProduct-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 40 }}px;
+  }
+
+  @media (min-width: 768px) {
+    #FeaturedProduct-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop | default: 80 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
+  .featured-product__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .featured-product__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4.5rem;
+    }
+  }
+
+  .featured-product__media-wrapper {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background-color: #f3f4f6;
+  }
+
+  .featured-product__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .featured-product__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .featured-product__badge {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    z-index: 2;
+  }
+
+  .featured-product__eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-subtext, #6b7280);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .featured-product__title {
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin: 0 0 0.85rem 0;
+    color: var(--color-heading, #111827);
+  }
+
+  .featured-product__rating {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .featured-product__stock-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #059669;
+  }
+
+  .featured-product__stock-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .featured-product__price-wrapper {
+    margin-bottom: 1.25rem;
+  }
+
+  .featured-product__description {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-subtext, #4b5563);
+    margin-bottom: 1.75rem;
+  }
+
+  .featured-product__option {
+    margin-bottom: 1.25rem;
+  }
+
+  .featured-product__option-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-heading, #111827);
+  }
+
+  .featured-product__option-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .featured-product__pill {
+    padding: 0.45rem 1.1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border, #d1d5db);
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .featured-product__pill.is-selected {
+    background: #111827;
+    color: #ffffff;
+    border-color: #111827;
+  }
+
+  .featured-product__actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .featured-product__qty-input {
+    width: 70px;
+    height: 52px;
+    border: 1px solid var(--color-border, #d1d5db);
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+  }
+
+  .featured-product__add-btn {
+    flex: 1;
+  }
+
+  .featured-product__more-link {
+    margin-bottom: 1.75rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .featured-product__trust-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .featured-product__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--color-subtext, #4b5563);
+  }
+
+  .featured-product__trust-item svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-heading, #111827);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Featured product",
+  "class": "shopify-section-featured-product",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Featured product"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading override",
+      "default": "Editor's Choice"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_details_link",
+      "label": "Show link to full product page",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style & Layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Container width",
+      "options": [
+        { "value": "standard", "label": "Standard (1240px)" },
+        { "value": "wide", "label": "Wide (1440px)" }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "color-scheme-1", "label": "Clean White" },
+        { "value": "color-scheme-2", "label": "Soft Warm" },
+        { "value": "color-scheme-3", "label": "Muted Slate" }
+      ],
+      "default": "color-scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured product",
+      "settings": {
+        "subheading": "Signature Highlight"
+      }
+    }
+  ]
+}
+{% endschema %}

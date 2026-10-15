@@ -1,0 +1,376 @@
+{% comment %}
+  PREMIUM FAQ & COLLAPSIBLE ACCORDION
+  Accessible, SEO-optimized (FAQPage Schema markup) collapsible questions with 1-column or 2-column split layouts.
+{% endcomment %}
+
+{%- liquid
+  assign layout_style = section.settings.layout_style | default: 'split'
+  assign color_scheme = section.settings.color_scheme | default: 'color-scheme-1'
+-%}
+
+<div class="faq-accordion {{ color_scheme }}" id="FAQ-{{ section.id }}">
+  <div class="section-container section-container--{{ section.settings.section_width | default: 'standard' }}">
+    
+    <div class="faq-accordion__layout faq-accordion__layout--{{ layout_style }}">
+      
+      <div class="faq-accordion__head-col">
+        {% render 'section-header',
+          subheading: section.settings.subheading,
+          subheading_style: section.settings.subheading_style,
+          heading: section.settings.heading,
+          heading_size: section.settings.heading_size,
+          description: section.settings.description,
+          alignment: section.settings.heading_alignment,
+          button_label: section.settings.button_label,
+          button_link: section.settings.button_link,
+          button_style: section.settings.button_style
+        %}
+
+        {%- if section.settings.show_contact_card and layout_style == 'split' -%}
+          <div class="faq-accordion__support-card card-base card-base--bordered">
+            <h4 class="faq-accordion__support-title">Still have questions?</h4>
+            <p class="faq-accordion__support-text">Our customer care concierge is available Monday to Friday to assist with styling and sizing.</p>
+            <a href="{{ section.settings.support_link | default: routes.root_url }}" class="btn btn--outline btn--sm">
+              Contact Concierge &rarr;
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="faq-accordion__content-col">
+        <div class="accordion-group" data-accordion="{% if section.settings.single_expand %}single{% else %}multi{% endif %}">
+          {%- for block in section.blocks -%}
+            <div 
+              class="accordion-item{% if forloop.first and section.settings.expand_first %} is-open{% endif %}" 
+              id="FAQItem-{{ block.id }}"
+              {{ block.shopify_attributes }}
+              {% if forloop.first and section.settings.expand_first %}open{% endif %}
+            >
+              <button 
+                type="button" 
+                class="accordion-trigger" 
+                aria-expanded="{% if forloop.first and section.settings.expand_first %}true{% else %}false{% endif %}"
+                aria-controls="FAQContent-{{ block.id }}"
+              >
+                <span>{{ block.settings.question | escape }}</span>
+                <span class="accordion-icon">
+                  {% render 'icon-library', icon: 'chevron-down' %}
+                </span>
+              </button>
+
+              <div 
+                id="FAQContent-{{ block.id }}" 
+                class="accordion-content rte" 
+                role="region"
+                aria-labelledby="FAQItem-{{ block.id }}"
+              >
+                {{ block.settings.answer }}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{%- if section.settings.enable_faq_schema and section.blocks.size > 0 -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {%- for block in section.blocks -%}
+        {
+          "@type": "Question",
+          "name": {{ block.settings.question | json }},
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": {{ block.settings.answer | strip_html | json }}
+          }
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+  </script>
+{%- endif -%}
+
+<style>
+  #FAQ-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 40 }}px;
+  }
+
+  @media (min-width: 768px) {
+    #FAQ-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop | default: 80 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
+  .faq-accordion__layout--single {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 900px) {
+    .faq-accordion__layout--split {
+      display: grid;
+      grid-template-columns: 4fr 7fr;
+      gap: 4.5rem;
+      align-items: flex-start;
+    }
+
+    .faq-accordion__layout--split .faq-accordion__head-col {
+      position: sticky;
+      top: 6rem;
+    }
+  }
+
+  .faq-accordion__support-card {
+    padding: 1.75rem;
+    margin-top: 2rem;
+    background: var(--color-card-bg, #f9fafb);
+  }
+
+  .faq-accordion__support-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-heading, #111827);
+  }
+
+  .faq-accordion__support-text {
+    margin: 0 0 1.25rem 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-subtext, #4b5563);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "FAQ & Accordion",
+  "class": "shopify-section-faq",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Got Questions?"
+    },
+    {
+      "type": "select",
+      "id": "subheading_style",
+      "label": "Subheading style",
+      "options": [
+        { "value": "plain", "label": "Plain" },
+        { "value": "pill", "label": "Pill badge" }
+      ],
+      "default": "pill"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Find clear answers regarding sizing, organic fabric care, shipping windows, and complimentary global returns.</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Layout & Options"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout presentation",
+      "options": [
+        { "value": "split", "label": "Two-column split with sticky header" },
+        { "value": "single", "label": "Single column centered" }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "checkbox",
+      "id": "expand_first",
+      "label": "Keep first question expanded by default",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "single_expand",
+      "label": "Collapse other items when an item opens",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact_card",
+      "label": "Show support inquiry card (split layout)",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "support_link",
+      "label": "Support contact link"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_faq_schema",
+      "label": "Enable Google FAQPage Schema SEO markup",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Container width",
+      "options": [
+        { "value": "standard", "label": "Standard (1240px)" },
+        { "value": "wide", "label": "Wide (1440px)" }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "color-scheme-1", "label": "Clean White" },
+        { "value": "color-scheme-2", "label": "Soft Warm" },
+        { "value": "color-scheme-3", "label": "Muted Slate" }
+      ],
+      "default": "color-scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How do I choose the correct size?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Our silhouettes are tailored true-to-size with a contemporary, relaxed drape. If you prefer a more tailored fit, we recommend selecting your regular size. Refer to our detailed size guide on each product page for exact garment measurements.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ & Accordion",
+      "blocks": [
+        {
+          "type": "question",
+          "settings": {
+            "question": "What is your complimentary return policy?",
+            "answer": "<p>We offer 30-day worldwide complimentary returns on all unworn items in original packaging. Pre-paid return labels are included directly in your parcel.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Where are your fabrics sourced and manufactured?",
+            "answer": "<p>We work exclusively with heritage mills across Northern Italy and Portugal that utilize certified organic fibers, non-toxic dyes, and ethical worker standards.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "How long will delivery take?",
+            "answer": "<p>Orders placed before 2 PM EST ship the same business day. Domestic express takes 1-2 business days, while international transit arrives within 3-5 business days.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "How should I care for natural wool and cashmere items?",
+            "answer": "<p>We recommend gentle hand-washing in cool water using pH-neutral wool detergent, or eco-friendly dry cleaning. Always dry flat away from direct heat.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,48 @@
+{% comment %}
+  STANDARDIZED SECTION HEADER SNIPPET
+  Accepts:
+  - subheading: {String}
+  - subheading_style: {String} 'plain' or 'pill' (default: 'plain')
+  - heading: {String}
+  - heading_tag: {String} 'h2' (default), 'h1', 'h3'
+  - heading_size: {String} 'sm', 'md', 'lg', 'xl' (default: 'md')
+  - description: {String}
+  - alignment: {String} 'left', 'center', 'right' (default: 'center')
+  - button_label: {String}
+  - button_link: {Url}
+  - button_style: {String} 'primary', 'secondary', 'outline', 'white'
+{% endcomment %}
+
+{%- if heading != blank or subheading != blank or description != blank -%}
+  {%- assign align = alignment | default: 'center' -%}
+  {%- assign tag = heading_tag | default: 'h2' -%}
+  {%- assign size = heading_size | default: 'md' -%}
+
+  <div class="section-head section-head--{{ align }}">
+    {%- if subheading != blank -%}
+      <span class="section-head__subheading{% if subheading_style == 'pill' %} section-head__subheading--pill{% endif %}">
+        {{ subheading | escape }}
+      </span>
+    {%- endif -%}
+
+    {%- if heading != blank -%}
+      <{{ tag }} class="section-head__title section-head__title--{{ size }}">
+        {{ heading | escape }}
+      </{{ tag }}>
+    {%- endif -%}
+
+    {%- if description != blank -%}
+      <div class="section-head__description rte">
+        {{ description }}
+      </div>
+    {%- endif -%}
+
+    {%- if button_label != blank and button_link != blank -%}
+      <div class="section-head__actions">
+        <a href="{{ button_link }}" class="btn btn--{{ button_style | default: 'primary' }}">
+          {{ button_label | escape }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}

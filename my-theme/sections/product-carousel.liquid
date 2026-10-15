@@ -1,0 +1,324 @@
+{% comment %}
+  PREMIUM PRODUCT CAROUSEL / SLIDER
+  Horizontal swipeable product slider with touch drag, navigation arrows, and quick-add integration.
+{% endcomment %}
+
+{%- liquid
+  assign collection = section.settings.collection
+  assign products_limit = section.settings.products_to_show | default: 8
+  assign color_scheme = section.settings.color_scheme | default: 'color-scheme-1'
+-%}
+
+<div class="product-carousel {{ color_scheme }}" id="ProductCarousel-{{ section.id }}" data-section-slider>
+  <div class="section-container section-container--{{ section.settings.section_width | default: 'standard' }}">
+    
+    <div class="product-carousel__head-wrapper">
+      {% render 'section-header',
+        subheading: section.settings.subheading,
+        subheading_style: section.settings.subheading_style,
+        heading: section.settings.heading,
+        heading_size: section.settings.heading_size,
+        description: section.settings.description,
+        alignment: section.settings.heading_alignment
+      %}
+
+      <div class="product-carousel__nav-actions">
+        <button type="button" class="section-slider__arrow" data-slider-prev aria-label="Previous products">
+          {% render 'icon-library', icon: 'arrow-left' %}
+        </button>
+        <button type="button" class="section-slider__arrow" data-slider-next aria-label="Next products">
+          {% render 'icon-library', icon: 'arrow-right' %}
+        </button>
+      </div>
+    </div>
+
+    <div class="section-slider__track" tabindex="0" role="region" aria-label="Product carousel">
+      {%- if collection != blank and collection.products.size > 0 -%}
+        {%- for product in collection.products limit: products_limit -%}
+          <div class="product-carousel__slide section-slider__slide">
+            {% render 'product-card',
+              product: product,
+              show_vendor: section.settings.show_vendor,
+              show_secondary_image: section.settings.show_secondary_image,
+              media_aspect_ratio: section.settings.image_ratio
+            %}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..products_limit) -%}
+          <div class="product-carousel__slide section-slider__slide">
+            <div class="product-card">
+              <div class="product-card__media-wrapper">
+                <div class="product-card__placeholder">
+                  {%- assign p_index = forloop.index | modulo: 6 | plus: 1 -%}
+                  {{ 'product-' | append: p_index | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              </div>
+              <div class="product-card__info">
+                <span class="product-card__vendor">Atelier Brand</span>
+                <h3 class="product-card__title"><a href="#">Capsule Product {{ i }}</a></h3>
+                <div class="price"><span class="price-item price-item--regular">$85.00</span></div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_view_all and collection != blank -%}
+      <div class="product-carousel__footer text-center">
+        <a href="{{ collection.url }}" class="btn btn--secondary">
+          View Complete Collection &rarr;
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<style>
+  #ProductCarousel-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 40 }}px;
+  }
+
+  @media (min-width: 768px) {
+    #ProductCarousel-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop | default: 80 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
+  .product-carousel__head-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+  }
+
+  .product-carousel__nav-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2.75rem;
+  }
+
+  @media (max-width: 639px) {
+    .product-carousel__head-wrapper {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .product-carousel__nav-actions {
+      align-self: flex-end;
+      margin-top: -1.5rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .product-carousel__slide {
+    flex: 0 0 280px;
+  }
+
+  @media (min-width: 768px) {
+    .product-carousel__slide {
+      flex: 0 0 calc(33.333% - 1rem);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-carousel__slide {
+      flex: 0 0 calc(25% - 1.125rem);
+    }
+  }
+
+  .product-carousel__footer {
+    margin-top: 2.5rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Product carousel",
+  "class": "shopify-section-product-carousel",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Trending This Week"
+    },
+    {
+      "type": "select",
+      "id": "subheading_style",
+      "label": "Subheading style",
+      "options": [
+        { "value": "plain", "label": "Plain" },
+        { "value": "pill", "label": "Pill badge" }
+      ],
+      "default": "pill"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Bestselling Essentials"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Collection & Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "label": "Products to show",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View All button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product Card Settings"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait", "label": "Portrait (4:5)" },
+        { "value": "square", "label": "Square (1:1)" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show second image on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Style & Spacing"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section container width",
+      "options": [
+        { "value": "standard", "label": "Standard (1240px)" },
+        { "value": "wide", "label": "Wide (1440px)" }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "color-scheme-1", "label": "Clean White" },
+        { "value": "color-scheme-2", "label": "Soft Warm" },
+        { "value": "color-scheme-3", "label": "Muted Slate" },
+        { "value": "color-scheme-4", "label": "Deep Charcoal" }
+      ],
+      "default": "color-scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product carousel",
+      "settings": {
+        "subheading": "Curated Selection",
+        "heading": "Popular & Trending",
+        "products_to_show": 8
+      }
+    }
+  ]
+}
+{% endschema %}

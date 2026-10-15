@@ -4,7 +4,48 @@
   "sections": {
     "footer": {
       "type": "footer",
-      "settings": {}
+      "blocks": {
+        "about": {
+          "type": "text",
+          "settings": {
+            "heading": "Our Atelier",
+            "subtext": "<p>Refined silhouettes and timeless craftsmanship designed for intentional living.</p>",
+            "show_social": true
+          }
+        },
+        "menu_1": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Collections",
+            "menu": "main-menu"
+          }
+        },
+        "menu_2": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Client Care",
+            "menu": "footer"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Join The Atelier",
+            "subtext": "<p>Receive private invitations, seasonal previews, and 10% off your first order.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "about",
+        "menu_1",
+        "menu_2",
+        "newsletter"
+      ],
+      "settings": {
+        "color_scheme": "color-scheme-4",
+        "show_payment_icons": true,
+        "show_policies": true
+      }
     }
   },
   "order": [

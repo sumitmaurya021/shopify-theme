@@ -1,33 +1,268 @@
 {
   "sections": {
-    "banner": {
-      "type": "image-banner",
+    "hero_banner": {
+      "type": "hero-banner",
       "settings": {
-        "subheading": "New Season",
-        "heading": "Discover Our Latest Collection",
-        "text": "Shop premium essentials crafted with unmatched quality and modern aesthetics.",
-        "button_label": "Shop Now"
+        "layout_style": "overlay",
+        "banner_height": "medium",
+        "text_alignment": "center",
+        "subheading": "New Season Capsule 2026",
+        "subheading_pill": true,
+        "heading": "Crafted For The Modern Aesthetic",
+        "heading_size": "lg",
+        "text": "<p>Experience timeless designs crafted from sustainable, ultra-fine materials designed for comfort and modern life.</p>",
+        "button_1_label": "Explore Collection",
+        "button_1_style": "white",
+        "button_2_label": "Our Philosophy",
+        "button_2_style": "outline",
+        "color_scheme": "color-scheme-4",
+        "overlay_opacity": 35
       }
     },
-    "featured": {
+    "logo_list": {
+      "type": "logo-list",
+      "blocks": {
+        "logo_1": { "type": "logo", "settings": { "text": "VOGUE" } },
+        "logo_2": { "type": "logo", "settings": { "text": "GQ" } },
+        "logo_3": { "type": "logo", "settings": { "text": "ELLE" } },
+        "logo_4": { "type": "logo", "settings": { "text": "FORBES" } },
+        "logo_5": { "type": "logo", "settings": { "text": "HARPER'S BAZAAR" } }
+      },
+      "block_order": ["logo_1", "logo_2", "logo_3", "logo_4", "logo_5"],
+      "settings": {
+        "subheading": "Press & Accolades",
+        "heading": "Recognized By Leading Publications",
+        "display_mode": "marquee",
+        "grayscale": true,
+        "color_scheme": "color-scheme-2"
+      }
+    },
+    "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "Featured Collection",
+        "subheading": "Curated Essentials",
+        "title": "Bestselling Collection",
+        "description": "<p>Discover our most coveted wardrobe investments, tailored with architectural precision.</p>",
         "products_to_show": 4,
         "columns_desktop": 4,
-        "show_view_all": true
+        "show_view_all": true,
+        "image_ratio": "portrait",
+        "color_scheme": "color-scheme-1"
       }
     },
-    "main": {
-      "type": "main-index",
+    "image_with_text": {
+      "type": "image-with-text",
       "settings": {
-        "heading": "Welcome to our store"
+        "layout": "image_first",
+        "subheading": "Our Atelier",
+        "subheading_pill": true,
+        "heading": "Thoughtful Design, Consciously Crafted",
+        "heading_size": "md",
+        "text": "<p>Every garment is conceived with architectural precision and tailored using traceable, organic materials to ensure unparalleled durability, comfort, and tactile elegance.</p>",
+        "button_label": "Discover The Process",
+        "button_style": "primary",
+        "image_ratio": "portrait",
+        "color_scheme": "color-scheme-2",
+        "card_style": "elevated"
+      }
+    },
+    "multi_column": {
+      "type": "multi-column",
+      "blocks": {
+        "col_1": {
+          "type": "column",
+          "settings": {
+            "icon": "truck",
+            "title": "Complimentary Worldwide Delivery",
+            "text": "<p>Carbon-neutral express delivery right to your door with full door-to-door tracking.</p>"
+          }
+        },
+        "col_2": {
+          "type": "column",
+          "settings": {
+            "icon": "leaf",
+            "title": "100% Certified Organic Fibers",
+            "text": "<p>Traceable, GOTS-certified fabrics ethically woven under fair trade artisan standards.</p>"
+          }
+        },
+        "col_3": {
+          "type": "column",
+          "settings": {
+            "icon": "shield-check",
+            "title": "Lifetime Quality Guarantee",
+            "text": "<p>Crafted to endure. If your piece ever requires care or repair, our concierge will handle it.</p>"
+          }
+        }
+      },
+      "block_order": ["col_1", "col_2", "col_3"],
+      "settings": {
+        "subheading": "Why Choose Us",
+        "heading": "The Standards We Uphold",
+        "columns_desktop": "3",
+        "card_style": "elevated",
+        "color_scheme": "color-scheme-1"
+      }
+    },
+    "product_carousel": {
+      "type": "product-carousel",
+      "settings": {
+        "subheading": "Trending This Week",
+        "heading": "Popular & Trending Pieces",
+        "products_to_show": 8,
+        "image_ratio": "portrait",
+        "show_view_all": true,
+        "color_scheme": "color-scheme-2"
+      }
+    },
+    "before_after": {
+      "type": "before-after-slider",
+      "settings": {
+        "subheading": "Proven Quality",
+        "heading": "Experience The Difference In Drape & Longevity",
+        "text": "<p>Drag the slider to observe how our double-faced cashmere and bespoke wool blend maintains pristine structure even after years of daily wear.</p>",
+        "before_label": "Standard Wool",
+        "after_label": "Our Cashmere",
+        "layout": "split",
+        "button_label": "Explore The Fabric",
+        "color_scheme": "color-scheme-1"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "review_1": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "title": "Sublime craftsmanship",
+            "quote": "<p>\"The fabric feel is extraordinary. It has survived multiple seasons and still looks brand new. Truly an investment piece.\"</p>",
+            "author": "Claire Beaumont",
+            "author_info": "Paris, France",
+            "verified": true
+          }
+        },
+        "review_2": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "title": "Unmatched attention to detail",
+            "quote": "<p>\"Arrived beautifully packaged within two days. The customer service concierge was attentive and helpful with sizing advice.\"</p>",
+            "author": "Marcus Vance",
+            "author_info": "New York, USA",
+            "verified": true
+          }
+        },
+        "review_3": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "title": "My new everyday staple",
+            "quote": "<p>\"Clean lines, sustainable origins, and effortless versatility. I ended up purchasing two more colors the next week.\"</p>",
+            "author": "Sofia Tanaka",
+            "author_info": "Tokyo, Japan",
+            "verified": true
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3"],
+      "settings": {
+        "subheading": "Customer Stories",
+        "heading": "What Our Community Says",
+        "layout_style": "grid",
+        "columns_desktop": "3",
+        "color_scheme": "color-scheme-2"
+      }
+    },
+    "stats_counter": {
+      "type": "stats-counter",
+      "blocks": {
+        "stat_1": { "type": "stat", "settings": { "icon": "sparkle", "number": "99.6%", "label": "Satisfaction Rate", "subtext": "From verified client reviews worldwide" } },
+        "stat_2": { "type": "stat", "settings": { "icon": "leaf", "number": "100%", "label": "Organic Fibers", "subtext": "GOTS certified & ethically cultivated" } },
+        "stat_3": { "type": "stat", "settings": { "icon": "shield-check", "number": "10-Year", "label": "Warranty Program", "subtext": "Guaranteed craftsmanship against defects" } },
+        "stat_4": { "type": "stat", "settings": { "icon": "award", "number": "32+", "label": "Design Accolades", "subtext": "Recognized in international salons" } }
+      },
+      "block_order": ["stat_1", "stat_2", "stat_3", "stat_4"],
+      "settings": {
+        "subheading": "By The Numbers",
+        "heading": "Our Commitment In Tangible Metrics",
+        "columns_desktop": "4",
+        "color_scheme": "color-scheme-4"
+      }
+    },
+    "faq_accordion": {
+      "type": "faq-accordion",
+      "blocks": {
+        "faq_1": {
+          "type": "question",
+          "settings": {
+            "question": "What is your complimentary return policy?",
+            "answer": "<p>We offer 30-day worldwide complimentary returns on all unworn items in original packaging with prepaid return labels included directly in your parcel.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "question",
+          "settings": {
+            "question": "Where are your fabrics sourced and manufactured?",
+            "answer": "<p>We work exclusively with heritage mills across Northern Italy and Portugal that utilize certified organic fibers, non-toxic dyes, and ethical worker standards.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "question",
+          "settings": {
+            "question": "How long will delivery take?",
+            "answer": "<p>Orders placed before 2 PM EST ship the same business day. Domestic express takes 1-2 business days, while international transit arrives within 3-5 business days.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "question",
+          "settings": {
+            "question": "How should I care for natural wool and cashmere items?",
+            "answer": "<p>We recommend gentle hand-washing in cool water using pH-neutral wool detergent, or eco-friendly dry cleaning. Always dry flat away from direct heat.</p>"
+          }
+        }
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4"],
+      "settings": {
+        "subheading": "Got Questions?",
+        "heading": "Frequently Asked Questions",
+        "layout_style": "split",
+        "color_scheme": "color-scheme-1"
+      }
+    },
+    "promo_banner": {
+      "type": "promotional-banner",
+      "settings": {
+        "badge_text": "Private Access Special",
+        "heading": "Enjoy 20% Off Your Curated Capsule",
+        "text": "<p>Unlock exclusive promotional savings across our entire winter edit. Available for a limited time only.</p>",
+        "coupon_code": "EXCLUSIVE20",
+        "button_label": "Shop The Private Sale",
+        "button_style": "white",
+        "color_scheme": "color-scheme-accent"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "subheading": "Join The Inner Circle",
+        "heading": "Subscribe & Receive 10% Off",
+        "text": "<p>Subscribe to receive private preview invitations, seasonal lookbooks, and 10% off your inaugural order.</p>",
+        "color_scheme": "color-scheme-2"
       }
     }
   },
   "order": [
-    "banner",
-    "featured",
-    "main"
+    "hero_banner",
+    "logo_list",
+    "featured_collection",
+    "image_with_text",
+    "multi_column",
+    "product_carousel",
+    "before_after",
+    "testimonials",
+    "stats_counter",
+    "faq_accordion",
+    "promo_banner",
+    "newsletter"
   ]
 }
