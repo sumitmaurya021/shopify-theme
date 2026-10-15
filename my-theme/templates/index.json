@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-index",
+      "settings": {
+        "heading": "Welcome to my store"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
