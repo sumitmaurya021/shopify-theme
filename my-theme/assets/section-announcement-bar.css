@@ -1,0 +1,132 @@
+/* ==========================================================================
+   ANNOUNCEMENT BAR COMPONENT
+   ========================================================================== */
+
+.announcement-bar {
+  position: relative;
+  background-color: var(--announcement-bg, #111827);
+  color: var(--announcement-text, #ffffff);
+  font-size: 0.825rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  z-index: 60;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.announcement-bar[hidden] {
+  display: none !important;
+}
+
+.announcement-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.5rem 3rem;
+  position: relative;
+  max-width: var(--header-max-width, 1400px);
+  margin: 0 auto;
+}
+
+.announcement-bar__slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.announcement-bar__item {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.announcement-bar__item.is-active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.announcement-bar__message {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.announcement-bar__link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.2s ease;
+}
+
+.announcement-bar__link:hover {
+  opacity: 0.8;
+}
+
+/* Controls */
+.announcement-bar__nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.announcement-bar__nav-btn:hover {
+  opacity: 1;
+}
+
+.announcement-bar__nav-btn--prev {
+  left: 1rem;
+}
+
+.announcement-bar__nav-btn--next {
+  right: 2.75rem;
+}
+
+.announcement-bar__close-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.announcement-bar__close-btn:hover {
+  opacity: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .announcement-bar__inner {
+    padding: 0.5rem 2.25rem;
+    font-size: 0.775rem;
+  }
+}

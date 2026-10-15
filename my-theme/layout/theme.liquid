@@ -10,6 +10,10 @@
   <link rel="canonical" href="{{ canonical_url }}">
 
   {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ 'section-header.css' | asset_url | stylesheet_tag }}
+  {{ 'section-announcement-bar.css' | asset_url | stylesheet_tag }}
+
+  <script src="{{ 'header.js' | asset_url }}" defer></script>
 
   {{ content_for_header }}
 </head>

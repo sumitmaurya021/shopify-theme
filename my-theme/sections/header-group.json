@@ -2,12 +2,65 @@
   "name": "Header group",
   "type": "header",
   "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-1": {
+          "type": "announcement",
+          "settings": {
+            "text": "✨ Free worldwide shipping on all orders over $75"
+          }
+        },
+        "announcement-2": {
+          "type": "announcement",
+          "settings": {
+            "text": "🔥 Special offer: Use code WELCOME10 for 10% off your first order"
+          }
+        }
+      },
+      "block_order": [
+        "announcement-1",
+        "announcement-2"
+      ],
+      "settings": {
+        "bg_color": "#111827",
+        "text_color": "#ffffff",
+        "auto_rotate": true,
+        "rotation_interval": 4,
+        "show_arrows": true,
+        "enable_dismiss": true
+      }
+    },
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "layout": "logo-left-nav-center",
+        "max_width": 1400,
+        "padding_y": 20,
+        "padding_x": 32,
+        "logo_width": 150,
+        "logo_mobile_width": 110,
+        "enable_transparent_header": false,
+        "sticky_behavior": "on-scroll-up",
+        "menu": "main-menu",
+        "nav_gap": 28,
+        "nav_font_size": 15,
+        "nav_font_weight": "500",
+        "bg_color": "#ffffff",
+        "text_color": "#111827",
+        "border_color": "rgba(0, 0, 0, 0.08)",
+        "dropdown_bg": "#ffffff",
+        "dropdown_text": "#111827",
+        "show_search": true,
+        "show_account": true,
+        "show_wishlist": false,
+        "cart_badge_bg": "#ef4444",
+        "cart_badge_text": "#ffffff"
+      }
     }
   },
   "order": [
+    "announcement-bar",
     "header"
   ]
 }

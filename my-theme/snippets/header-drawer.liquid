@@ -1,0 +1,145 @@
+{% comment %}
+  Renders the mobile header drawer navigation.
+  Accepts:
+  - menu: Menu object (e.g., section.settings.mobile_menu | default: section.settings.menu)
+  - secondary_menu: Optional secondary menu object
+  - show_search: Boolean
+  - show_account: Boolean
+  - show_social: Boolean
+{% endcomment %}
+
+<header-drawer class="header-drawer" id="HeaderDrawer">
+  <button type="button" class="header-drawer__toggle header-icon-btn" aria-expanded="false" aria-controls="HeaderDrawerContent" aria-label="Open menu" data-drawer-open>
+    <span class="hamburger-box">
+      <span class="hamburger-inner"></span>
+    </span>
+  </button>
+
+  <div class="header-drawer__overlay" data-drawer-overlay aria-hidden="true"></div>
+
+  <div class="header-drawer__panel" id="HeaderDrawerContent" role="dialog" aria-modal="true" aria-label="Navigation drawer" tabindex="-1">
+    <div class="header-drawer__header">
+      <span class="header-drawer__title">{{ shop.name }}</span>
+      <button type="button" class="header-drawer__close header-icon-btn" aria-label="Close menu" data-drawer-close>
+        {% render 'icon-header', name: 'close', class: 'icon-close' %}
+      </button>
+    </div>
+
+    {%- if show_search -%}
+      <div class="header-drawer__search">
+        <form action="{{ routes.search_url }}" method="get" role="search" class="drawer-search-form">
+          <input 
+            type="search" 
+            name="q" 
+            class="drawer-search-input" 
+            placeholder="Search products..." 
+            aria-label="Search"
+            autocomplete="off"
+          >
+          <input type="hidden" name="options[prefix]" value="last">
+          <button type="submit" class="drawer-search-btn" aria-label="Submit search">
+            {% render 'icon-header', name: 'search', class: 'icon-search' %}
+          </button>
+        </form>
+      </div>
+    {%- endif -%}
+
+    <div class="header-drawer__body">
+      <nav class="header-drawer__nav" aria-label="Mobile navigation">
+        <ul class="drawer-nav__list" role="list">
+          {%- for link in menu.links -%}
+            {%- if link.links != blank -%}
+              <li class="drawer-nav__item drawer-nav__item--has-children">
+                <details class="drawer-accordion" data-drawer-accordion>
+                  <summary class="drawer-nav__link drawer-nav__link--parent{% if link.current or link.child_active %} drawer-nav__link--active{% endif %}">
+                    <span>{{ link.title | escape }}</span>
+                    <span class="drawer-accordion__icon">
+                      {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down' %}
+                    </span>
+                  </summary>
+
+                  <div class="drawer-accordion__panel">
+                    <ul class="drawer-nav__sublist" role="list">
+                      {%- for child_link in link.links -%}
+                        {%- if child_link.links != blank -%}
+                          <li class="drawer-nav__subitem drawer-nav__subitem--has-children">
+                            <details class="drawer-subaccordion">
+                              <summary class="drawer-nav__sublink drawer-nav__sublink--parent{% if child_link.current or child_link.child_active %} drawer-nav__sublink--active{% endif %}">
+                                <span>{{ child_link.title | escape }}</span>
+                                <span class="drawer-accordion__icon">
+                                  {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down' %}
+                                </span>
+                              </summary>
+                              <div class="drawer-accordion__panel">
+                                <ul class="drawer-nav__grandchild-list" role="list">
+                                  {%- for grandchild_link in child_link.links -%}
+                                    <li class="drawer-nav__grandchild-item">
+                                      <a href="{{ grandchild_link.url }}" class="drawer-nav__grandchild-link{% if grandchild_link.current %} drawer-nav__grandchild-link--active{% endif %}">
+                                        {{ grandchild_link.title | escape }}
+                                      </a>
+                                    </li>
+                                  {%- endfor -%}
+                                </ul>
+                              </div>
+                            </details>
+                          </li>
+                        {%- else -%}
+                          <li class="drawer-nav__subitem">
+                            <a href="{{ child_link.url }}" class="drawer-nav__sublink{% if child_link.current %} drawer-nav__sublink--active{% endif %}">
+                              {{ child_link.title | escape }}
+                            </a>
+                          </li>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </details>
+              </li>
+            {%- else -%}
+              <li class="drawer-nav__item">
+                <a href="{{ link.url }}" class="drawer-nav__link{% if link.current %} drawer-nav__link--active{% endif %}">
+                  <span>{{ link.title | escape }}</span>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+
+        {%- if secondary_menu != blank and secondary_menu.links.size > 0 -%}
+          <div class="drawer-nav__secondary">
+            <ul class="drawer-nav__secondary-list" role="list">
+              {%- for link in secondary_menu.links -%}
+                <li class="drawer-nav__secondary-item">
+                  <a href="{{ link.url }}" class="drawer-nav__secondary-link">
+                    {{ link.title | escape }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      </nav>
+    </div>
+
+    <div class="header-drawer__footer">
+      {%- if shop.customer_accounts_enabled and show_account -%}
+        <div class="drawer-account-link">
+          {%- if customer -%}
+            <a href="{{ routes.account_url }}" class="drawer-footer-link">
+              {% render 'icon-header', name: 'account', class: 'icon-account' %}
+              <span>{{ 'customer.account_fallback' | default: 'My Account' }}</span>
+            </a>
+            <a href="{{ routes.account_logout_url }}" class="drawer-footer-sublink">
+              Log out
+            </a>
+          {%- else -%}
+            <a href="{{ routes.account_login_url }}" class="drawer-footer-link">
+              {% render 'icon-header', name: 'account', class: 'icon-account' %}
+              <span>Sign In / Register</span>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</header-drawer>

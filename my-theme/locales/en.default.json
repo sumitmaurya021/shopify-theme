@@ -1,5 +1,14 @@
 {
   "general": {
     "search": "Search"
+  },
+  "customer": {
+    "account_fallback": "My Account"
+  },
+  "accessibility": {
+    "close": "Close",
+    "menu": "Menu",
+    "search": "Search",
+    "cart": "Cart"
   }
 }

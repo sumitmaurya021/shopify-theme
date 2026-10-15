@@ -1,0 +1,129 @@
+{% comment %}
+  Renders desktop mega menu item with multi-column links and optional promotional blocks.
+  Accepts:
+  - link: Link object from linklists
+  - mega_block: Block object containing mega menu settings (or nil)
+{% endcomment %}
+
+<li class="nav-item nav-item--has-mega" data-has-megamenu>
+  <details class="disclosure-menu disclosure-menu--mega" data-menu-disclosure>
+    <summary class="nav-link nav-link--parent{% if link.current or link.child_active %} nav-link--active{% endif %}" aria-haspopup="true" aria-expanded="false">
+      <span>{{ link.title | escape }}</span>
+      {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down nav-arrow' %}
+    </summary>
+
+    <div class="mega-menu" data-mega-content>
+      <div class="mega-menu__container page-width">
+        <div class="mega-menu__grid{% if mega_block != nil and mega_block.settings.promo_image_1 != blank or mega_block.settings.promo_heading_1 != blank %} mega-menu__grid--with-promos{% endif %}">
+          
+          {%- if link.links != blank -%}
+            <div class="mega-menu__columns">
+              {%- for child_link in link.links -%}
+                <div class="mega-menu__column">
+                  <a href="{{ child_link.url }}" class="mega-menu__heading{% if child_link.current %} mega-menu__heading--active{% endif %}">
+                    {{ child_link.title | escape }}
+                  </a>
+                  {%- if child_link.links != blank -%}
+                    <ul class="mega-menu__list" role="list">
+                      {%- for grandchild_link in child_link.links -%}
+                        <li class="mega-menu__item">
+                          <a href="{{ grandchild_link.url }}" class="mega-menu__link{% if grandchild_link.current %} mega-menu__link--active{% endif %}">
+                            {{ grandchild_link.title | escape }}
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          {%- if mega_block != nil -%}
+            {%- assign has_promo_1 = false -%}
+            {%- assign has_promo_2 = false -%}
+            {%- if mega_block.settings.promo_image_1 != blank or mega_block.settings.promo_heading_1 != blank -%}
+              {%- assign has_promo_1 = true -%}
+            {%- endif -%}
+            {%- if mega_block.settings.promo_image_2 != blank or mega_block.settings.promo_heading_2 != blank -%}
+              {%- assign has_promo_2 = true -%}
+            {%- endif -%}
+
+            {%- if has_promo_1 or has_promo_2 -%}
+              <div class="mega-menu__promos">
+                {%- if has_promo_1 -%}
+                  <div class="mega-promo-card">
+                    <a href="{{ mega_block.settings.promo_link_1 | default: '#' }}" class="mega-promo-card__link">
+                      {%- if mega_block.settings.promo_image_1 != blank -%}
+                        <div class="mega-promo-card__media">
+                          {{ mega_block.settings.promo_image_1 | image_url: width: 600 | image_tag: 
+                            loading: 'lazy', 
+                            class: 'mega-promo-card__image',
+                            widths: '240, 360, 480, 600',
+                            alt: mega_block.settings.promo_heading_1 | default: 'Promotion' 
+                          }}
+                        </div>
+                      {%- endif -%}
+                      <div class="mega-promo-card__content">
+                        {%- if mega_block.settings.promo_badge_1 != blank -%}
+                          <span class="mega-promo-card__badge">{{ mega_block.settings.promo_badge_1 | escape }}</span>
+                        {%- endif -%}
+                        {%- if mega_block.settings.promo_heading_1 != blank -%}
+                          <h4 class="mega-promo-card__heading">{{ mega_block.settings.promo_heading_1 | escape }}</h4>
+                        {%- endif -%}
+                        {%- if mega_block.settings.promo_subtext_1 != blank -%}
+                          <p class="mega-promo-card__subtext">{{ mega_block.settings.promo_subtext_1 | escape }}</p>
+                        {%- endif -%}
+                        {%- if mega_block.settings.promo_cta_1 != blank -%}
+                          <span class="mega-promo-card__cta">
+                            {{ mega_block.settings.promo_cta_1 | escape }}
+                            {% render 'icon-header', name: 'arrow-right', class: 'icon-arrow-right' %}
+                          </span>
+                        {%- endif -%}
+                      </div>
+                    </a>
+                  </div>
+                {%- endif -%}
+
+                {%- if has_promo_2 -%}
+                  <div class="mega-promo-card">
+                    <a href="{{ mega_block.settings.promo_link_2 | default: '#' }}" class="mega-promo-card__link">
+                      {%- if mega_block.settings.promo_image_2 != blank -%}
+                        <div class="mega-promo-card__media">
+                          {{ mega_block.settings.promo_image_2 | image_url: width: 600 | image_tag: 
+                            loading: 'lazy', 
+                            class: 'mega-promo-card__image',
+                            widths: '240, 360, 480, 600',
+                            alt: mega_block.settings.promo_heading_2 | default: 'Promotion' 
+                          }}
+                        </div>
+                      {%- endif -%}
+                      <div class="mega-promo-card__content">
+                        {%- if mega_block.settings.promo_badge_2 != blank -%}
+                          <span class="mega-promo-card__badge">{{ mega_block.settings.promo_badge_2 | escape }}</span>
+                        {%- endif -%}
+                        {%- if mega_block.settings.promo_heading_2 != blank -%}
+                          <h4 class="mega-promo-card__heading">{{ mega_block.settings.promo_heading_2 | escape }}</h4>
+                        {%- endif -%}
+                        {%- if mega_block.settings.promo_subtext_2 != blank -%}
+                          <p class="mega-promo-card__subtext">{{ mega_block.settings.promo_subtext_2 | escape }}</p>
+                        {%- endif -%}
+                        {%- if mega_block.settings.promo_cta_2 != blank -%}
+                          <span class="mega-promo-card__cta">
+                            {{ mega_block.settings.promo_cta_2 | escape }}
+                            {% render 'icon-header', name: 'arrow-right', class: 'icon-arrow-right' %}
+                          </span>
+                        {%- endif -%}
+                      </div>
+                    </a>
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+
+        </div>
+      </div>
+    </div>
+  </details>
+</li>

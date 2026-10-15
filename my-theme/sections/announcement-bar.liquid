@@ -1,0 +1,147 @@
+{% comment %}
+  PREMIUM SHOPIFY ANNOUNCEMENT BAR SECTION
+  Supports: Multiple announcements, Auto-rotation slider, Pause on hover, Manual controls, Dismiss button.
+{% endcomment %}
+
+{%- if section.blocks.size > 0 -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      --announcement-bg: {{ section.settings.bg_color | default: '#111827' }};
+      --announcement-text: {{ section.settings.text_color | default: '#ffffff' }};
+    }
+  </style>
+
+  <announcement-bar 
+    class="announcement-bar" 
+    data-auto-rotate="{{ section.settings.auto_rotate }}"
+    data-interval="{{ section.settings.rotation_interval | default: 4 }}"
+    role="region" 
+    aria-label="Announcements"
+  >
+    <div class="announcement-bar__inner">
+
+      {%- if section.blocks.size > 1 and section.settings.show_arrows -%}
+        <button type="button" class="announcement-bar__nav-btn announcement-bar__nav-btn--prev" aria-label="Previous announcement" data-announcement-prev>
+          {% render 'icon-header', name: 'chevron-left', class: 'icon-chevron-left' %}
+        </button>
+      {%- endif -%}
+
+      <div class="announcement-bar__slider">
+        {%- for block in section.blocks -%}
+          <div class="announcement-bar__item{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+            <p class="announcement-bar__message">
+              {%- if block.settings.link != blank -%}
+                <a href="{{ block.settings.link }}" class="announcement-bar__link">
+                  {{ block.settings.text | escape }}
+                </a>
+              {%- else -%}
+                <span>{{ block.settings.text | escape }}</span>
+              {%- endif -%}
+            </p>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.blocks.size > 1 and section.settings.show_arrows -%}
+        <button type="button" class="announcement-bar__nav-btn announcement-bar__nav-btn--next" aria-label="Next announcement" data-announcement-next>
+          {% render 'icon-header', name: 'chevron-right', class: 'icon-chevron-right' %}
+        </button>
+      {%- endif -%}
+
+      {%- if section.settings.enable_dismiss -%}
+        <button type="button" class="announcement-bar__close-btn" aria-label="Dismiss announcement" data-announcement-close>
+          {% render 'icon-header', name: 'close', class: 'icon-close' %}
+        </button>
+      {%- endif -%}
+
+    </div>
+  </announcement-bar>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "class": "shopify-section-announcement-bar",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Auto-rotate announcements",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotation_interval",
+      "label": "Change announcement every",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show previous/next navigation buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_dismiss",
+      "label": "Allow user to dismiss announcement bar",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free worldwide shipping on all orders over $75"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "✨ Free worldwide shipping on all orders over $75"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "🔥 Summer Sale: Up to 40% off selected items! Shop Now"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

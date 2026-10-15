@@ -1,0 +1,57 @@
+{% comment %}
+  Renders desktop dropdown menu item for standard navigation links.
+  Accepts:
+  - link: Link object from linklists
+  - enable_hover: Boolean whether to open on hover
+{% endcomment %}
+
+{%- if link.links != blank -%}
+  <li class="nav-item nav-item--has-dropdown" data-has-dropdown>
+    <details class="disclosure-menu" data-menu-disclosure>
+      <summary class="nav-link nav-link--parent{% if link.current or link.child_active %} nav-link--active{% endif %}" aria-haspopup="true" aria-expanded="false">
+        <span>{{ link.title | escape }}</span>
+        {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down nav-arrow' %}
+      </summary>
+
+      <div class="dropdown-menu dropdown-menu--standard" data-dropdown-content>
+        <ul class="dropdown-menu__list" role="list">
+          {%- for child_link in link.links -%}
+            {%- if child_link.links != blank -%}
+              <li class="dropdown-menu__item dropdown-menu__item--has-sub" data-has-subdropdown>
+                <details class="disclosure-sub-menu" data-submenu-disclosure>
+                  <summary class="dropdown-link dropdown-link--parent{% if child_link.current or child_link.child_active %} dropdown-link--active{% endif %}">
+                    <span>{{ child_link.title | escape }}</span>
+                    {% render 'icon-header', name: 'chevron-right', class: 'icon-chevron-right sub-arrow' %}
+                  </summary>
+                  <div class="dropdown-menu dropdown-menu--sub" data-subdropdown-content>
+                    <ul class="dropdown-menu__list" role="list">
+                      {%- for grandchild_link in child_link.links -%}
+                        <li class="dropdown-menu__item">
+                          <a href="{{ grandchild_link.url }}" class="dropdown-link{% if grandchild_link.current %} dropdown-link--active{% endif %}">
+                            {{ grandchild_link.title | escape }}
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </details>
+              </li>
+            {%- else -%}
+              <li class="dropdown-menu__item">
+                <a href="{{ child_link.url }}" class="dropdown-link{% if child_link.current %} dropdown-link--active{% endif %}">
+                  {{ child_link.title | escape }}
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </details>
+  </li>
+{%- else -%}
+  <li class="nav-item">
+    <a href="{{ link.url }}" class="nav-link{% if link.current %} nav-link--active{% endif %}">
+      <span>{{ link.title | escape }}</span>
+    </a>
+  </li>
+{%- endif -%}

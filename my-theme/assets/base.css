@@ -16,34 +16,11 @@ a {
   text-decoration: none;
 }
 
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 2rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.header a {
-  font-weight: 600;
-  font-size: 1.25rem;
-}
-
-.header nav {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.header nav a {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #4b5563;
-  transition: color 0.2s ease;
-}
-
-.header nav a:hover {
-  color: #111827;
+/* Utilities */
+.page-width {
+  max-width: var(--header-max-width, 1400px);
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 /* Hero Section */

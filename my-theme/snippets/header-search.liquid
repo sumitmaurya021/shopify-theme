@@ -1,0 +1,64 @@
+{% comment %}
+  Renders predictive search modal / drawer overlay.
+  Accepts:
+  - style: 'modal' | 'drawer'
+{% endcomment %}
+
+<predictive-search class="predictive-search-modal" id="PredictiveSearchModal" data-search-modal>
+  <div class="predictive-search__overlay" data-search-overlay aria-hidden="true"></div>
+
+  <div class="predictive-search__container" role="dialog" aria-modal="true" aria-label="Search store">
+    <div class="predictive-search__header page-width">
+      <form action="{{ routes.predictive_search_url }}" method="get" role="search" class="predictive-search__form" data-predictive-form>
+        <div class="predictive-search__field">
+          <label for="SearchInModal" class="visually-hidden">Search</label>
+          <span class="predictive-search__icon-lead">
+            {% render 'icon-header', name: 'search', class: 'icon-search' %}
+          </span>
+          <input 
+            id="SearchInModal"
+            class="predictive-search__input" 
+            type="search" 
+            name="q" 
+            value="" 
+            placeholder="Search products, collections, and articles..." 
+            role="combobox"
+            aria-expanded="false"
+            aria-owns="PredictiveSearchResults"
+            aria-controls="PredictiveSearchResults"
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            autocorrect="off"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            data-search-input
+          >
+          <input name="options[prefix]" type="hidden" value="last">
+          
+          <button type="reset" class="predictive-search__clear-btn" aria-label="Clear search input" data-search-clear hidden>
+            {% render 'icon-header', name: 'close', class: 'icon-close' %}
+          </button>
+
+          <span class="predictive-search__loading-spinner" data-search-spinner hidden>
+            {% render 'icon-header', name: 'spinner', class: 'icon-spinner' %}
+          </span>
+
+          <button type="button" class="predictive-search__close-btn" aria-label="Close search" data-search-close>
+            {% render 'icon-header', name: 'close', class: 'icon-close' %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="predictive-search__results-wrapper page-width" id="PredictiveSearchResults" data-search-results tabindex="-1">
+      <div class="predictive-search__default-state" data-search-default>
+        <p class="predictive-search__hint">Start typing to see instant product recommendations...</p>
+      </div>
+
+      <div class="predictive-search__live-results" data-search-content hidden>
+        <!-- Populated dynamically via predictive search API in header.js -->
+      </div>
+    </div>
+  </div>
+</predictive-search>

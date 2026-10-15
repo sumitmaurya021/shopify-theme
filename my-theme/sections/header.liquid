@@ -1,15 +1,639 @@
-<header class="header">
-  <a href="{{ routes.root_url }}">{{ shop.name }}</a>
-  <nav>
-    {% for link in linklists.main-menu.links %}
-      <a href="{{ link.url }}">{{ link.title }}</a>
-    {% endfor %}
-  </nav>
-</header>
+{% comment %}
+  PREMIUM SHOPIFY HEADER SECTION
+  Features: Multi-layout, Smart Sticky Scroll, Mega Menus, Mobile Drawer, Predictive Search, Transparent Mode.
+{% endcomment %}
+
+{%- liquid
+  assign enable_transparent = false
+  if section.settings.enable_transparent_header and template.name == 'index'
+    assign enable_transparent = true
+  endif
+
+  assign main_menu = section.settings.menu | default: linklists.main-menu
+  assign mobile_menu = section.settings.mobile_menu | default: main_menu
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --header-bg: {{ section.settings.bg_color | default: '#ffffff' }};
+    --header-text: {{ section.settings.text_color | default: '#111827' }};
+    --header-border: {{ section.settings.border_color | default: 'rgba(0, 0, 0, 0.08)' }};
+    --header-transparent-text: {{ section.settings.transparent_text_color | default: '#ffffff' }};
+    --header-max-width: {{ section.settings.max_width }}px;
+    --header-padding-y: {{ section.settings.padding_y }}px;
+    --header-padding-x: {{ section.settings.padding_x }}px;
+    --logo-desktop-width: {{ section.settings.logo_width }}px;
+    --logo-mobile-width: {{ section.settings.logo_mobile_width }}px;
+    --nav-gap: {{ section.settings.nav_gap }}px;
+    --nav-font-size: {{ section.settings.nav_font_size }}px;
+    --nav-font-weight: {{ section.settings.nav_font_weight }};
+    --cart-badge-bg: {{ section.settings.cart_badge_bg | default: '#ef4444' }};
+    --cart-badge-text: {{ section.settings.cart_badge_text | default: '#ffffff' }};
+    --dropdown-bg: {{ section.settings.dropdown_bg | default: '#ffffff' }};
+    --dropdown-text: {{ section.settings.dropdown_text | default: '#111827' }};
+  }
+</style>
+
+<sticky-header 
+  class="header-section header--layout-{{ section.settings.layout }}{% if section.settings.sticky_behavior == 'always' %} header--sticky-always{% elsif section.settings.sticky_behavior == 'on-scroll-up' %} header--sticky-scroll-up{% elsif section.settings.sticky_behavior == 'shrink' %} header--sticky-always header--shrink{% endif %}{% if enable_transparent %} header--transparent{% endif %}"
+  data-sticky-mode="{{ section.settings.sticky_behavior }}"
+>
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+
+      {%- comment -%} Mobile Hamburger Toggle (Left on mobile) {%- endcomment -%}
+      {% render 'header-drawer', 
+        menu: mobile_menu, 
+        secondary_menu: section.settings.secondary_menu, 
+        show_search: section.settings.show_search, 
+        show_account: section.settings.show_account 
+      %}
+
+      {%- comment -%} Top Bar for "logo-center-nav-below" layout {%- endcomment -%}
+      {%- if section.settings.layout == 'logo-center-nav-below' -%}
+        <div class="header-top-bar">
+          <div class="header-top-bar__empty"></div>
+          
+          <div class="header-logo">
+            <a href="{{ routes.root_url }}" class="header-logo__link" aria-label="{{ shop.name }}">
+              {%- if section.settings.logo != blank -%}
+                {%- assign logo_alt = section.settings.logo.alt | default: shop.name | escape -%}
+                {{ section.settings.logo | image_url: width: 600 | image_tag:
+                  class: 'header-logo__image header-logo--default',
+                  widths: '120, 160, 200, 240, 320, 480',
+                  alt: logo_alt,
+                  preload: true
+                }}
+                {%- if section.settings.logo_transparent != blank and enable_transparent -%}
+                  {{ section.settings.logo_transparent | image_url: width: 600 | image_tag:
+                    class: 'header-logo__image header-logo--transparent',
+                    widths: '120, 160, 200, 240, 320, 480',
+                    alt: logo_alt,
+                    preload: true
+                  }}
+                {%- endif -%}
+              {%- else -%}
+                <span class="header-logo__text">{{ shop.name }}</span>
+              {%- endif -%}
+            </a>
+          </div>
+
+          <div class="header-actions">
+            {%- if section.settings.show_search -%}
+              <button type="button" class="header-icon-btn" aria-label="Search store" data-search-trigger>
+                {% render 'icon-header', name: 'search', class: 'icon-search' %}
+              </button>
+            {%- endif -%}
+
+            {%- if shop.customer_accounts_enabled and section.settings.show_account -%}
+              <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header-icon-btn" aria-label="Account">
+                {% render 'icon-header', name: 'account', class: 'icon-account' %}
+              </a>
+            {%- endif -%}
+
+            {%- if section.settings.show_wishlist -%}
+              <a href="#wishlist" class="header-icon-btn" aria-label="Wishlist" data-wishlist-trigger>
+                {% render 'icon-header', name: 'wishlist', class: 'icon-wishlist' %}
+              </a>
+            {%- endif -%}
+
+            <a href="{{ routes.cart_url }}" class="header-icon-btn header-cart-btn" aria-label="Cart, {{ cart.item_count }} items" id="CartIconBubble">
+              {% render 'icon-header', name: 'cart', class: 'icon-cart' %}
+              {%- if cart.item_count > 0 -%}
+                <span class="header-cart-badge" id="CartCount">{{ cart.item_count }}</span>
+              {%- endif -%}
+            </a>
+          </div>
+        </div>
+
+        <nav class="header-nav" aria-label="Main navigation">
+          <ul class="header-nav__list" role="list">
+            {%- for link in main_menu.links -%}
+              {%- assign matching_mega_block = nil -%}
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'mega_menu' -%}
+                  {%- assign block_title_clean = block.settings.menu_title | strip | downcase -%}
+                  {%- assign link_title_clean = link.title | strip | downcase -%}
+                  {%- if block_title_clean == link_title_clean -%}
+                    {%- assign matching_mega_block = block -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if matching_mega_block != nil -%}
+                {% render 'header-mega-menu', link: link, mega_block: matching_mega_block %}
+              {%- else -%}
+                {% render 'header-dropdown-menu', link: link %}
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </nav>
+
+      {%- elsif section.settings.layout == 'logo-center-split' -%}
+        {%- comment -%} Split navigation around center logo {%- endcomment -%}
+        {%- assign total_links = main_menu.links.size -%}
+        {%- assign split_point = total_links | divided_by: 2 -%}
+
+        <nav class="header-nav header-nav--split-left" aria-label="Navigation left">
+          <ul class="header-nav__list" role="list">
+            {%- for link in main_menu.links limit: split_point -%}
+              {% render 'header-dropdown-menu', link: link %}
+            {%- endfor -%}
+          </ul>
+        </nav>
+
+        <div class="header-logo">
+          <a href="{{ routes.root_url }}" class="header-logo__link" aria-label="{{ shop.name }}">
+            {%- if section.settings.logo != blank -%}
+              {{ section.settings.logo | image_url: width: 600 | image_tag:
+                class: 'header-logo__image header-logo--default',
+                widths: '120, 160, 200, 240, 320, 480',
+                alt: shop.name,
+                preload: true
+              }}
+              {%- if section.settings.logo_transparent != blank and enable_transparent -%}
+                {{ section.settings.logo_transparent | image_url: width: 600 | image_tag:
+                  class: 'header-logo__image header-logo--transparent',
+                  widths: '120, 160, 200, 240, 320, 480',
+                  alt: shop.name,
+                  preload: true
+                }}
+              {%- endif -%}
+            {%- else -%}
+              <span class="header-logo__text">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+        </div>
+
+        <nav class="header-nav header-nav--split-right" aria-label="Navigation right">
+          <ul class="header-nav__list" role="list">
+            {%- for link in main_menu.links offset: split_point -%}
+              {% render 'header-dropdown-menu', link: link %}
+            {%- endfor -%}
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          {%- if section.settings.show_search -%}
+            <button type="button" class="header-icon-btn" aria-label="Search store" data-search-trigger>
+              {% render 'icon-header', name: 'search', class: 'icon-search' %}
+            </button>
+          {%- endif -%}
+
+          {%- if shop.customer_accounts_enabled and section.settings.show_account -%}
+            <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header-icon-btn" aria-label="Account">
+              {% render 'icon-header', name: 'account', class: 'icon-account' %}
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.show_wishlist -%}
+            <a href="#wishlist" class="header-icon-btn" aria-label="Wishlist" data-wishlist-trigger>
+              {% render 'icon-header', name: 'wishlist', class: 'icon-wishlist' %}
+            </a>
+          {%- endif -%}
+
+          <a href="{{ routes.cart_url }}" class="header-icon-btn header-cart-btn" aria-label="Cart, {{ cart.item_count }} items" id="CartIconBubble">
+            {% render 'icon-header', name: 'cart', class: 'icon-cart' %}
+            {%- if cart.item_count > 0 -%}
+              <span class="header-cart-badge" id="CartCount">{{ cart.item_count }}</span>
+            {%- endif -%}
+          </a>
+        </div>
+
+      {%- else -%}
+        {%- comment -%} Standard Logo Left with Nav Center or Nav Left {%- endcomment -%}
+        <div class="header-logo">
+          <a href="{{ routes.root_url }}" class="header-logo__link" aria-label="{{ shop.name }}">
+            {%- if section.settings.logo != blank -%}
+              {{ section.settings.logo | image_url: width: 600 | image_tag:
+                class: 'header-logo__image header-logo--default',
+                widths: '120, 160, 200, 240, 320, 480',
+                alt: shop.name,
+                preload: true
+              }}
+              {%- if section.settings.logo_transparent != blank and enable_transparent -%}
+                {{ section.settings.logo_transparent | image_url: width: 600 | image_tag:
+                  class: 'header-logo__image header-logo--transparent',
+                  widths: '120, 160, 200, 240, 320, 480',
+                  alt: shop.name,
+                  preload: true
+                }}
+              {%- endif -%}
+            {%- else -%}
+              <span class="header-logo__text">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+        </div>
+
+        <nav class="header-nav" aria-label="Main navigation">
+          <ul class="header-nav__list" role="list">
+            {%- for link in main_menu.links -%}
+              {%- assign matching_mega_block = nil -%}
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'mega_menu' -%}
+                  {%- assign block_title_clean = block.settings.menu_title | strip | downcase -%}
+                  {%- assign link_title_clean = link.title | strip | downcase -%}
+                  {%- if block_title_clean == link_title_clean -%}
+                    {%- assign matching_mega_block = block -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if matching_mega_block != nil -%}
+                {% render 'header-mega-menu', link: link, mega_block: matching_mega_block %}
+              {%- else -%}
+                {% render 'header-dropdown-menu', link: link %}
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          {%- if section.settings.show_search -%}
+            <button type="button" class="header-icon-btn" aria-label="Search store" data-search-trigger>
+              {% render 'icon-header', name: 'search', class: 'icon-search' %}
+            </button>
+          {%- endif -%}
+
+          {%- if shop.customer_accounts_enabled and section.settings.show_account -%}
+            <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header-icon-btn" aria-label="Account">
+              {% render 'icon-header', name: 'account', class: 'icon-account' %}
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.show_wishlist -%}
+            <a href="#wishlist" class="header-icon-btn" aria-label="Wishlist" data-wishlist-trigger>
+              {% render 'icon-header', name: 'wishlist', class: 'icon-wishlist' %}
+            </a>
+          {%- endif -%}
+
+          <a href="{{ routes.cart_url }}" class="header-icon-btn header-cart-btn" aria-label="Cart, {{ cart.item_count }} items" id="CartIconBubble">
+            {% render 'icon-header', name: 'cart', class: 'icon-cart' %}
+            {%- if cart.item_count > 0 -%}
+              <span class="header-cart-badge" id="CartCount">{{ cart.item_count }}</span>
+            {%- endif -%}
+          </a>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </header>
+</sticky-header>
+
+{%- comment -%} Global Predictive Search Overlay {%- endcomment -%}
+{%- if section.settings.show_search -%}
+  {% render 'header-search' %}
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Header",
-  "settings": []
+  "class": "shopify-section-header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout & Sizing"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Desktop header layout",
+      "options": [
+        { "value": "logo-left-nav-center", "label": "Logo left, navigation center" },
+        { "value": "logo-left-nav-left", "label": "Logo left, navigation left" },
+        { "value": "logo-center-nav-below", "label": "Logo center, navigation below" },
+        { "value": "logo-center-split", "label": "Logo center, navigation split" }
+      ],
+      "default": "logo-left-nav-center"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum container width",
+      "min": 1100,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_x",
+      "label": "Horizontal padding",
+      "min": 12,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Branding & Logos"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Primary logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Desktop logo width",
+      "min": 50,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "logo_mobile_width",
+      "label": "Mobile logo width",
+      "min": 40,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+    {
+      "type": "header",
+      "content": "Transparent Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header",
+      "label": "Enable transparent header on homepage",
+      "default": false,
+      "info": "Transparent background over the homepage hero banner with transition to solid on scroll"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_transparent",
+      "label": "Transparent header logo",
+      "info": "Optional inverted/light logo used when transparent header is active"
+    },
+    {
+      "type": "color",
+      "id": "transparent_text_color",
+      "label": "Transparent text & icons color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Scroll & Sticky Behavior"
+    },
+    {
+      "type": "select",
+      "id": "sticky_behavior",
+      "label": "Sticky header behavior",
+      "options": [
+        { "value": "none", "label": "None (Static)" },
+        { "value": "always", "label": "Always sticky" },
+        { "value": "on-scroll-up", "label": "Reveal on scroll up" },
+        { "value": "shrink", "label": "Compact / shrink on scroll" }
+      ],
+      "default": "on-scroll-up"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Menus"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main desktop menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "mobile_menu",
+      "label": "Mobile menu",
+      "info": "Leave empty to use main desktop menu on mobile"
+    },
+    {
+      "type": "link_list",
+      "id": "secondary_menu",
+      "label": "Secondary mobile menu",
+      "info": "Optional utility links in mobile drawer (e.g., FAQ, Contact, Track Order)"
+    },
+    {
+      "type": "range",
+      "id": "nav_gap",
+      "label": "Navigation item spacing",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "nav_font_size",
+      "label": "Navigation font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "nav_font_weight",
+      "label": "Navigation font weight",
+      "options": [
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semi-bold (600)" },
+        { "value": "700", "label": "Bold (700)" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Aesthetics"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Header background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Header text & icons",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Header bottom border",
+      "default": "rgba(0, 0, 0, 0.08)"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_bg",
+      "label": "Dropdown & mega menu background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_text",
+      "label": "Dropdown text",
+      "default": "#111827"
+    },
+    {
+      "type": "header",
+      "content": "Commerce & Action Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search icon with predictive search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show customer account icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show wishlist icon",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "cart_badge_bg",
+      "label": "Cart item count badge background",
+      "default": "#ef4444"
+    },
+    {
+      "type": "color",
+      "id": "cart_badge_text",
+      "label": "Cart item count badge text",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_menu",
+      "name": "Mega menu promo",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_title",
+          "label": "Menu item title",
+          "info": "Enter the exact navigation link title to turn into a mega menu (e.g., 'Shop' or 'Catalog')"
+        },
+        {
+          "type": "header",
+          "content": "Promotion Card 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_image_1",
+          "label": "Promotional image 1"
+        },
+        {
+          "type": "text",
+          "id": "promo_badge_1",
+          "label": "Badge text 1",
+          "default": "New Arrivals"
+        },
+        {
+          "type": "text",
+          "id": "promo_heading_1",
+          "label": "Heading 1",
+          "default": "Autumn Collection"
+        },
+        {
+          "type": "text",
+          "id": "promo_subtext_1",
+          "label": "Subtext 1",
+          "default": "Discover latest styles made for comfort."
+        },
+        {
+          "type": "url",
+          "id": "promo_link_1",
+          "label": "Link 1"
+        },
+        {
+          "type": "text",
+          "id": "promo_cta_1",
+          "label": "CTA button text 1",
+          "default": "Explore Now"
+        },
+        {
+          "type": "header",
+          "content": "Promotion Card 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_image_2",
+          "label": "Promotional image 2"
+        },
+        {
+          "type": "text",
+          "id": "promo_badge_2",
+          "label": "Badge text 2",
+          "default": "Limited Offer"
+        },
+        {
+          "type": "text",
+          "id": "promo_heading_2",
+          "label": "Heading 2",
+          "default": "Best Sellers"
+        },
+        {
+          "type": "text",
+          "id": "promo_subtext_2",
+          "label": "Subtext 2",
+          "default": "Save up to 30% on our favorites."
+        },
+        {
+          "type": "url",
+          "id": "promo_link_2",
+          "label": "Link 2"
+        },
+        {
+          "type": "text",
+          "id": "promo_cta_2",
+          "label": "CTA button text 2",
+          "default": "Shop Best Sellers"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "blocks": [
+        {
+          "type": "mega_menu",
+          "settings": {
+            "menu_title": "Catalog",
+            "promo_badge_1": "Featured",
+            "promo_heading_1": "Trending Now",
+            "promo_cta_1": "Shop Collection"
+          }
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}
