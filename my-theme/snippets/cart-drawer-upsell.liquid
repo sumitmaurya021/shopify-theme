@@ -1,0 +1,68 @@
+{% comment %}
+  Renders an individual upsell product card inside the cart drawer.
+  Accepts:
+  - product: Shopify Product object
+{% endcomment %}
+
+{%- liquid
+  assign is_in_cart = false
+  for item in cart.items
+    if item.product_id == product.id
+      assign is_in_cart = true
+      break
+    endif
+  endfor
+-%}
+
+{%- unless is_in_cart or product.available == false -%}
+  <div class="cart-upsell-card" data-upsell-id="{{ product.id }}">
+    <div class="cart-upsell-card__media">
+      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+        {%- if product.featured_image != blank -%}
+          {{ product.featured_image | image_url: width: 160 | image_tag:
+            class: 'cart-upsell-card__image',
+            loading: 'lazy',
+            alt: product.title | escape
+          }}
+        {%- else -%}
+          <div class="cart-upsell-card__placeholder">
+            {{ 'product-2' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {%- endif -%}
+      </a>
+    </div>
+
+    <div class="cart-upsell-card__content">
+      <h5 class="cart-upsell-card__title">
+        <a href="{{ product.url }}">{{ product.title | escape }}</a>
+      </h5>
+
+      <div class="cart-upsell-card__price">
+        {%- if product.compare_at_price > product.price -%}
+          <s class="cart-upsell-card__compare-price">{{ product.compare_at_price | money }}</s>
+        {%- endif -%}
+        <span class="cart-upsell-card__current-price">{{ product.price | money }}</span>
+      </div>
+
+      <div class="cart-upsell-card__action">
+        {%- if product.has_only_default_variant -%}
+          <button 
+            type="button" 
+            class="cart-upsell-card__btn" 
+            data-upsell-add="{{ product.first_available_variant.id }}"
+            aria-label="Add {{ product.title | escape }} to cart"
+          >
+            <span>+ Add</span>
+            <span class="cart-upsell-card__spinner" hidden>
+              {% render 'icon-header', name: 'spinner', class: 'icon-spinner animate-spin' %}
+            </span>
+          </button>
+        {%- else -%}
+          <a href="{{ product.url }}" class="cart-upsell-card__btn cart-upsell-card__btn--select">
+            Choose Options
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endunless -%}

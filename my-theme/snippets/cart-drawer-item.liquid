@@ -1,0 +1,159 @@
+{% comment %}
+  Renders an individual cart item in the cart drawer.
+  Accepts:
+  - item: Line item object from cart.items
+  - forloop: Loop context
+{% endcomment %}
+
+<li class="cart-drawer-item" data-cart-item-key="{{ item.key }}" data-line-index="{{ forloop.index }}">
+  <div class="cart-drawer-item__media">
+    <a href="{{ item.url }}" class="cart-drawer-item__media-link" tabindex="-1" aria-hidden="true">
+      {%- if item.image != blank -%}
+        {{ item.image | image_url: width: 300 | image_tag:
+          class: 'cart-drawer-item__image',
+          widths: '100, 160, 240, 300',
+          loading: 'lazy',
+          alt: item.title | escape
+        }}
+      {%- else -%}
+        <div class="cart-drawer-item__image-placeholder">
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </a>
+  </div>
+
+  <div class="cart-drawer-item__content">
+    <div class="cart-drawer-item__header">
+      <div class="cart-drawer-item__title-group">
+        {%- if item.product.vendor != blank -%}
+          <span class="cart-drawer-item__vendor">{{ item.product.vendor }}</span>
+        {%- endif -%}
+        <h4 class="cart-drawer-item__title">
+          <a href="{{ item.url }}" class="cart-drawer-item__link">{{ item.product.title | escape }}</a>
+        </h4>
+      </div>
+
+      <button 
+        type="button" 
+        class="cart-drawer-item__remove-btn" 
+        aria-label="Remove {{ item.title | escape }} from cart"
+        data-cart-remove="{{ item.key }}"
+      >
+        {% render 'icon-header', name: 'close', class: 'icon-close' %}
+      </button>
+    </div>
+
+    {%- unless item.product.has_only_default_variant -%}
+      <div class="cart-drawer-item__variants">
+        {%- for option in item.options_with_values -%}
+          <span class="cart-drawer-item__variant-pill">
+            {{ option.name }}: {{ option.value }}
+          </span>
+        {%- endfor -%}
+      </div>
+    {%- endunless -%}
+
+    {%- if item.selling_plan_allocation != nil -%}
+      <div class="cart-drawer-item__selling-plan">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        <span>{{ item.selling_plan_allocation.selling_plan.name }}</span>
+      </div>
+    {%- endif -%}
+
+    {%- assign property_size = item.properties | size -%}
+    {%- if property_size > 0 -%}
+      <div class="cart-drawer-item__properties">
+        {%- for p in item.properties -%}
+          {%- assign first_character_in_key = p.first | truncate: 1, '' -%}
+          {%- unless p.last == blank or first_character_in_key == '_' -%}
+            <div class="cart-drawer-item__property">
+              <span class="property-label">{{ p.first }}:</span>
+              {%- if p.last contains '/uploads/' -%}
+                <a href="{{ p.last }}" target="_blank" class="property-link">View File</a>
+              {%- else -%}
+                <span class="property-value">{{ p.last }}</span>
+              {%- endif -%}
+            </div>
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if item.line_level_discount_allocations.size > 0 -%}
+      <ul class="cart-drawer-item__discounts" role="list">
+        {%- for discount_allocation in item.line_level_discount_allocations -%}
+          <li class="cart-drawer-item__discount-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <span>{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <div class="cart-drawer-item__footer">
+      <div class="cart-drawer-item__quantity-selector">
+        <button 
+          type="button" 
+          class="qty-btn qty-btn--minus" 
+          aria-label="Decrease quantity of {{ item.title | escape }}"
+          data-quantity-minus
+          data-cart-key="{{ item.key }}"
+        >
+          &minus;
+        </button>
+        <input 
+          type="number" 
+          name="updates[]" 
+          id="Updates_{{ item.key }}" 
+          class="qty-input" 
+          value="{{ item.quantity }}" 
+          min="0" 
+          aria-label="Quantity for {{ item.title | escape }}"
+          data-cart-key="{{ item.key }}"
+          data-quantity-input
+        >
+        <button 
+          type="button" 
+          class="qty-btn qty-btn--plus" 
+          aria-label="Increase quantity of {{ item.title | escape }}"
+          data-quantity-plus
+          data-cart-key="{{ item.key }}"
+        >
+          &#43;
+        </button>
+      </div>
+
+      <div class="cart-drawer-item__price-group">
+        {%- if item.original_line_price != item.final_line_price -%}
+          <span class="cart-drawer-item__price cart-drawer-item__price--compare">
+            <s class="visually-hidden">Original price:</s>
+            <s>{{ item.original_line_price | money }}</s>
+          </span>
+          <span class="cart-drawer-item__price cart-drawer-item__price--discounted">
+            <span class="visually-hidden">Discounted price:</span>
+            {{ item.final_line_price | money }}
+          </span>
+        {%- else -%}
+          <span class="cart-drawer-item__price">
+            {{ item.final_line_price | money }}
+          </span>
+        {%- endif -%}
+
+        {%- if item.unit_price_measurement -%}
+          <div class="cart-drawer-item__unit-price">
+            {{ item.unit_price | money }}/
+            {%- if item.unit_price_measurement.reference_value != 1 -%}
+              {{- item.unit_price_measurement.reference_value -}}
+            {%- endif -%}
+            {{ item.unit_price_measurement.reference_unit }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</li>

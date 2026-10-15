@@ -10,5 +10,17 @@
     "menu": "Menu",
     "search": "Search",
     "cart": "Cart"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "subtotal": "Subtotal",
+    "checkout": "Proceed to Checkout",
+    "view_cart": "View Cart Page",
+    "empty": "Your cart is currently empty",
+    "continue_shopping": "Start Shopping",
+    "disclaimer": "Shipping, taxes, and discounts calculated at checkout.",
+    "remove": "Remove",
+    "note": "Add Order Note",
+    "terms": "I agree with the terms and conditions"
   }
 }

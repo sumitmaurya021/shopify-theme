@@ -1,0 +1,417 @@
+{% comment %}
+  PREMIUM SHOPIFY CART DRAWER SECTION
+  Features: Ajax API, Section Rendering API, Free Shipping Bar, Upsells, Order Notes, Terms & Conditions, Sticky Footer.
+{% endcomment %}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --cart-drawer-width: {{ section.settings.drawer_width | default: 440 }}px;
+    --cart-drawer-bg: {{ section.settings.bg_color | default: '#ffffff' }};
+    --cart-drawer-text: {{ section.settings.text_color | default: '#111827' }};
+    --cart-drawer-border: {{ section.settings.border_color | default: '#f3f4f6' }};
+    --cart-shipping-bar-bg: {{ section.settings.shipping_bar_bg | default: '#f3f4f6' }};
+    --cart-shipping-bar-fill: {{ section.settings.shipping_bar_fill | default: '#10b981' }};
+    --cart-checkout-btn-bg: {{ section.settings.checkout_btn_bg | default: '#111827' }};
+    --cart-checkout-btn-text: {{ section.settings.checkout_btn_text | default: '#ffffff' }};
+  }
+</style>
+
+<cart-drawer 
+  class="cart-drawer{% if cart == empty %} is-empty{% endif %}" 
+  id="CartDrawer" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-label="Your Shopping Cart" 
+  tabindex="-1"
+  data-section-id="{{ section.id }}"
+  data-slide-direction="{{ section.settings.slide_direction | default: 'right' }}"
+>
+  <div class="cart-drawer__overlay" data-cart-overlay aria-hidden="true"></div>
+
+  <div class="cart-drawer__panel" id="CartDrawerPanel">
+    
+    {%- comment -%} Drawer Header {%- endcomment -%}
+    <div class="cart-drawer__header">
+      <div class="cart-drawer__title-wrap">
+        <h3 class="cart-drawer__heading">
+          Your Cart
+          <span class="cart-drawer__count-badge" id="CartDrawerCountBadge">({{ cart.item_count }})</span>
+        </h3>
+      </div>
+      <button 
+        type="button" 
+        class="cart-drawer__close-btn" 
+        aria-label="Close cart drawer" 
+        data-cart-close
+      >
+        {% render 'icon-header', name: 'close', class: 'icon-close' %}
+      </button>
+    </div>
+
+    {%- comment -%} Free Shipping Progress Bar {%- endcomment -%}
+    {%- if section.settings.enable_free_shipping -%}
+      {%- liquid
+        assign threshold_cents = section.settings.free_shipping_threshold | times: 100
+        assign remaining_cents = threshold_cents | minus: cart.total_price
+        assign progress_percent = cart.total_price | times: 100.0 | divided_by: threshold_cents
+        if progress_percent > 100
+          assign progress_percent = 100
+        endif
+      -%}
+
+      <div class="cart-shipping-bar" data-shipping-bar data-threshold="{{ threshold_cents }}">
+        <div class="cart-shipping-bar__message" data-shipping-message>
+          {%- if cart.total_price >= threshold_cents -%}
+            <span class="cart-shipping-bar__success">
+              {{ section.settings.free_shipping_success_text | default: '🎉 Congratulations! You have unlocked Free Shipping!' }}
+            </span>
+          {%- else -%}
+            <span>
+              Add <strong data-shipping-remaining>{{ remaining_cents | money }}</strong> more to unlock Free Shipping!
+            </span>
+          {%- endif -%}
+        </div>
+        <div class="cart-shipping-bar__track">
+          <div 
+            class="cart-shipping-bar__fill" 
+            data-shipping-fill 
+            style="width: {{ progress_percent }}%;"
+          ></div>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Drawer Body {%- endcomment -%}
+    <div class="cart-drawer__body" data-cart-body>
+      {%- if cart.item_count > 0 -%}
+        
+        <div class="cart-drawer__items-container" data-cart-items-container>
+          <ul class="cart-drawer__items" role="list" id="CartDrawerItemsList">
+            {%- for item in cart.items -%}
+              {% render 'cart-drawer-item', item: item, forloop: forloop %}
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- comment -%} Upsells Section {%- endcomment -%}
+        {%- if section.settings.enable_upsells and section.settings.upsell_collection != blank -%}
+          {%- assign upsell_products = section.settings.upsell_collection.products -%}
+          {%- if upsell_products.size > 0 -%}
+            <div class="cart-drawer__upsells" data-cart-upsells>
+              <h5 class="cart-drawer__upsells-heading">
+                {{ section.settings.upsell_heading | default: 'You May Also Like' }}
+              </h5>
+              <div class="cart-drawer__upsells-list">
+                {%- for product in upsell_products limit: section.settings.upsell_limit -%}
+                  {% render 'cart-drawer-upsell', product: product %}
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- comment -%} Cart Note Accordion {%- endcomment -%}
+        {%- if section.settings.enable_cart_notes -%}
+          <details class="cart-drawer__accordion" data-cart-note-details>
+            <summary class="cart-drawer__accordion-toggle">
+              <span>Add Order Note</span>
+              {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down' %}
+            </summary>
+            <div class="cart-drawer__accordion-content">
+              <label for="CartDrawerNote" class="visually-hidden">Order Note</label>
+              <textarea 
+                name="note" 
+                id="CartDrawerNote" 
+                class="cart-drawer__note-textarea" 
+                placeholder="Special instructions for your order..." 
+                data-cart-note
+              >{{ cart.note }}</textarea>
+            </div>
+          </details>
+        {%- endif -%}
+
+      {%- else -%}
+
+        {%- comment -%} Empty Cart State {%- endcomment -%}
+        <div class="cart-drawer__empty" data-cart-empty-state>
+          <div class="cart-drawer__empty-icon">
+            {% render 'icon-header', name: 'cart', class: 'icon-cart-empty' %}
+          </div>
+          <h4 class="cart-drawer__empty-title">
+            {{ section.settings.empty_cart_title | default: 'Your cart is currently empty' }}
+          </h4>
+          <p class="cart-drawer__empty-text">
+            {{ section.settings.empty_cart_text | default: 'Looks like you have not added anything to your cart yet.' }}
+          </p>
+          <a 
+            href="{{ section.settings.empty_cart_btn_url | default: routes.all_products_collection_url }}" 
+            class="cart-drawer__empty-btn"
+            data-cart-close
+          >
+            {{ section.settings.empty_cart_btn_text | default: 'Start Shopping' }}
+          </a>
+        </div>
+
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Sticky Cart Footer {%- endcomment -%}
+    {%- if cart.item_count > 0 -%}
+      <div class="cart-drawer__footer" data-cart-footer>
+        
+        {%- comment -%} Terms and Conditions {%- endcomment -%}
+        {%- if section.settings.enable_terms -%}
+          <div class="cart-drawer__terms">
+            <label class="cart-drawer__terms-label">
+              <input type="checkbox" id="CartDrawerTermsCheckbox" class="cart-drawer__terms-checkbox" data-cart-terms>
+              <span>{{ section.settings.terms_text | default: 'I agree with the terms and conditions' }}</span>
+            </label>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Subtotal & Totals {%- endcomment -%}
+        <div class="cart-drawer__totals">
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+            <ul class="cart-drawer__cart-discounts" role="list">
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <li class="cart-drawer__cart-discount">
+                  <span>{{ discount.title }}</span>
+                  <span>-{{ discount.total_allocated_amount | money }}</span>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          <div class="cart-drawer__subtotal-row">
+            <span class="cart-drawer__subtotal-label">Subtotal</span>
+            <span class="cart-drawer__subtotal-value" id="CartDrawerSubtotal">{{ cart.total_price | money_with_currency }}</span>
+          </div>
+
+          <p class="cart-drawer__disclaimer">
+            Shipping, taxes, and discounts calculated at checkout.
+          </p>
+        </div>
+
+        {%- comment -%} Checkout Actions {%- endcomment -%}
+        <div class="cart-drawer__actions">
+          <form action="{{ routes.cart_url }}" method="post" id="CartDrawerForm">
+            <button 
+              type="submit" 
+              name="checkout" 
+              class="cart-drawer__checkout-btn" 
+              id="CartDrawerCheckoutBtn"
+            >
+              <span>{{ section.settings.checkout_btn_label | default: 'Proceed to Checkout' }}</span>
+              {% render 'icon-header', name: 'arrow-right', class: 'icon-arrow-right' %}
+            </button>
+          </form>
+
+          {%- if section.settings.show_view_cart_btn -%}
+            <a href="{{ routes.cart_url }}" class="cart-drawer__view-cart-btn">
+              View Cart Page
+            </a>
+          {%- endif -%}
+        </div>
+
+      </div>
+    {%- endif -%}
+
+  </div>
+</cart-drawer>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "class": "shopify-section-cart-drawer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout & Sizing"
+    },
+    {
+      "type": "range",
+      "id": "drawer_width",
+      "label": "Desktop drawer width",
+      "min": 360,
+      "max": 540,
+      "step": 10,
+      "unit": "px",
+      "default": 440
+    },
+    {
+      "type": "select",
+      "id": "slide_direction",
+      "label": "Slide direction",
+      "options": [
+        { "value": "right", "label": "Slide from right" },
+        { "value": "left", "label": "Slide from left" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Styling"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Drawer background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#f3f4f6"
+    },
+    {
+      "type": "header",
+      "content": "Free Shipping Progress Bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_free_shipping",
+      "label": "Enable free shipping progress bar",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping threshold (in store currency)",
+      "default": 75,
+      "info": "Enter amount (e.g. 75 for $75.00)"
+    },
+    {
+      "type": "text",
+      "id": "free_shipping_success_text",
+      "label": "Free shipping unlocked message",
+      "default": "🎉 Congratulations! You have unlocked Free Shipping!"
+    },
+    {
+      "type": "color",
+      "id": "shipping_bar_bg",
+      "label": "Progress bar track background",
+      "default": "#f3f4f6"
+    },
+    {
+      "type": "color",
+      "id": "shipping_bar_fill",
+      "label": "Progress bar fill color",
+      "default": "#10b981"
+    },
+    {
+      "type": "header",
+      "content": "Cart Upsells & Recommendations"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_upsells",
+      "label": "Enable upsell recommendations",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "upsell_heading",
+      "label": "Upsells heading",
+      "default": "Pairs Well With"
+    },
+    {
+      "type": "collection",
+      "id": "upsell_collection",
+      "label": "Recommended products collection"
+    },
+    {
+      "type": "range",
+      "id": "upsell_limit",
+      "label": "Maximum upsells to display",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Order Notes & Terms"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cart_notes",
+      "label": "Enable order notes",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_terms",
+      "label": "Enable terms and conditions checkbox",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "terms_text",
+      "label": "Terms and conditions label",
+      "default": "I agree with the terms and conditions"
+    },
+    {
+      "type": "header",
+      "content": "Checkout Button"
+    },
+    {
+      "type": "text",
+      "id": "checkout_btn_label",
+      "label": "Checkout button label",
+      "default": "Proceed to Checkout"
+    },
+    {
+      "type": "color",
+      "id": "checkout_btn_bg",
+      "label": "Checkout button background",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "checkout_btn_text",
+      "label": "Checkout button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_cart_btn",
+      "label": "Show 'View Cart' link",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Empty Cart State"
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_title",
+      "label": "Empty cart heading",
+      "default": "Your cart is currently empty"
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_text",
+      "label": "Empty cart subtext",
+      "default": "Looks like you have not added anything to your cart yet."
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_btn_text",
+      "label": "Continue shopping button text",
+      "default": "Start Shopping"
+    },
+    {
+      "type": "url",
+      "id": "empty_cart_btn_url",
+      "label": "Continue shopping button link"
+    }
+  ]
+}
+{% endschema %}
