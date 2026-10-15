@@ -1,0 +1,101 @@
+{% comment %}
+  CONTACT FORM SECTION
+  Renders Shopify contact form with server error and success validation.
+{% endcomment %}
+
+<div class="contact-page page-width page-width--narrow" id="ContactSection-{{ section.id }}">
+  {% render 'breadcrumbs' %}
+
+  <header class="contact-page__header">
+    <h1 class="contact-page__title">{{ page.title | default: 'Contact Us' | escape }}</h1>
+    {%- if page.content != blank -%}
+      <div class="contact-page__intro rte">
+        {{ page.content }}
+      </div>
+    {%- endif -%}
+  </header>
+
+  <div class="contact-form-wrapper">
+    {%- form 'contact', id: 'ContactForm', class: 'contact-form' -%}
+      {%- if form.posted_successfully? -%}
+        <div class="form-status form-status--success" tabindex="-1" autofocus>
+          <p>🎉 Thank you! Your message has been sent successfully. We will get back to you shortly.</p>
+        </div>
+      {%- elsif form.errors -%}
+        <div class="form-status form-status--error" tabindex="-1" autofocus>
+          <p>Please adjust the following:</p>
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+
+      <div class="contact-form__fields">
+        <div class="form-field">
+          <label for="ContactForm-name" class="form-label">Name</label>
+          <input 
+            type="text" 
+            id="ContactForm-name" 
+            name="contact[name]" 
+            value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" 
+            placeholder="Your Name"
+            class="form-input"
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="ContactForm-email" class="form-label">Email <span aria-hidden="true">*</span></label>
+          <input 
+            type="email" 
+            id="ContactForm-email" 
+            name="contact[email]" 
+            spellcheck="false" 
+            autocapitalize="off" 
+            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" 
+            aria-required="true" 
+            required 
+            placeholder="your.email@example.com"
+            class="form-input"
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="ContactForm-phone" class="form-label">Phone Number</label>
+          <input 
+            type="tel" 
+            id="ContactForm-phone" 
+            name="contact[phone]" 
+            pattern="[0-9\-]*" 
+            value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}" 
+            placeholder="Phone number"
+            class="form-input"
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="ContactForm-body" class="form-label">Message <span aria-hidden="true">*</span></label>
+          <textarea 
+            rows="6" 
+            id="ContactForm-body" 
+            name="contact[body]" 
+            required 
+            aria-required="true" 
+            placeholder="How can we help you?"
+            class="form-textarea"
+          >{{ form.body }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn--primary contact-form__submit-btn">
+          Send Message
+        </button>
+      </div>
+    {%- endform -%}
+  </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "class": "shopify-section-contact-form",
+  "settings": []
+}
+{% endschema %}

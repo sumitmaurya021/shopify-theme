@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "show_vendor": true,
+        "show_inventory_notice": true,
+        "show_dynamic_checkout": true,
+        "show_shipping_tab": true,
+        "shipping_tab_content": "Free standard delivery on all orders over $75. Orders are shipped within 1-2 business days with tracking. Easy 30-day returns."
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,0 +1,24 @@
+{% comment %}
+  MAIN PAGE SECTION
+  Renders generic standard pages (About, FAQs, Terms, etc.) from Shopify Admin.
+{% endcomment %}
+
+<div class="page-template page-width page-width--narrow" id="PageSection-{{ section.id }}">
+  {% render 'breadcrumbs' %}
+  
+  <header class="page-template__header">
+    <h1 class="page-template__title">{{ page.title | escape }}</h1>
+  </header>
+
+  <div class="page-template__content rte">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page content",
+  "class": "shopify-section-main-page",
+  "settings": []
+}
+{% endschema %}

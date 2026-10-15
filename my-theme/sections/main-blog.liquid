@@ -1,0 +1,93 @@
+{% comment %}
+  MAIN BLOG SECTION
+  Renders blog articles listing with pagination.
+{% endcomment %}
+
+{%- paginate blog.articles by section.settings.articles_per_page -%}
+  <div class="blog-page page-width" id="MainBlog">
+    {% render 'breadcrumbs' %}
+
+    <header class="blog-page__header">
+      <h1 class="blog-page__title">{{ blog.title | escape }}</h1>
+    </header>
+
+    {%- if blog.articles.size > 0 -%}
+      <div class="blog-grid">
+        {%- for article in blog.articles -%}
+          <article class="article-card">
+            {%- if article.image -%}
+              <div class="article-card__media">
+                <a href="{{ article.url }}">
+                  {{ article.image | image_url: width: 600 | image_tag:
+                    class: 'article-card__image',
+                    loading: 'lazy',
+                    alt: article.image.alt | default: article.title | escape
+                  }}
+                </a>
+              </div>
+            {%- endif -%}
+
+            <div class="article-card__content">
+              <div class="article-card__meta">
+                <span class="article-card__date">{{ article.published_at | time_tag: format: 'date' }}</span>
+                {%- if section.settings.show_author -%}
+                  <span class="article-card__author">&bull; {{ article.author }}</span>
+                {%- endif -%}
+              </div>
+
+              <h2 class="article-card__title">
+                <a href="{{ article.url }}">{{ article.title | escape }}</a>
+              </h2>
+
+              <p class="article-card__excerpt">
+                {%- if article.excerpt.size > 0 -%}
+                  {{ article.excerpt | strip_html | truncatewords: 30 }}
+                {%- else -%}
+                  {{ article.content | strip_html | truncatewords: 30 }}
+                {%- endif -%}
+              </p>
+
+              <a href="{{ article.url }}" class="article-card__read-more">
+                Read Article &rarr;
+              </a>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <div class="blog-pagination">
+          {% render 'pagination', paginate: paginate, anchor: '#MainBlog' %}
+        </div>
+      {%- endif -%}
+
+    {%- else -%}
+      <p class="text-center">No articles found in this blog.</p>
+    {%- endif -%}
+
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Blog articles",
+  "class": "shopify-section-main-blog",
+  "settings": [
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Articles per page",
+      "min": 3,
+      "max": 12,
+      "step": 3,
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show article author",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

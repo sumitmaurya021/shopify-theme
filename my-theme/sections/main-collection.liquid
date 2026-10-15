@@ -1,0 +1,235 @@
+{% comment %}
+  MAIN COLLECTION SECTION
+  Features: Collection Banner, Sorting, Native Storefront Filtering, Active Filter Chips, Responsive Grid, Pagination.
+{% endcomment %}
+
+{%- paginate collection.products by section.settings.products_per_page -%}
+  <div class="collection-page page-width" id="CollectionProductGrid" data-section-id="{{ section.id }}">
+    
+    {% render 'breadcrumbs' %}
+
+    {%- comment -%} Collection Hero / Banner {%- endcomment -%}
+    <div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %}">
+      <div class="collection-hero__content">
+        <h1 class="collection-hero__title">{{ collection.title | escape }}</h1>
+        {%- if collection.description != blank and section.settings.show_collection_description -%}
+          <div class="collection-hero__description rte">
+            {{ collection.description }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_collection_image and collection.image -%}
+        <div class="collection-hero__image-wrapper">
+          {{ collection.image | image_url: width: 800 | image_tag:
+            class: 'collection-hero__image',
+            loading: 'lazy',
+            alt: collection.title | escape
+          }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Collection Toolbar (Product count + Sorting) {%- endcomment -%}
+    <div class="collection-toolbar">
+      <span class="collection-toolbar__count">
+        {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
+      </span>
+
+      {%- if section.settings.enable_sorting -%}
+        <div class="collection-toolbar__sort">
+          <label for="SortBy" class="collection-toolbar__sort-label">Sort by:</label>
+          {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+          <select name="sort_by" id="SortBy" class="collection-toolbar__sort-select" onchange="location.href = this.value;">
+            {%- for option in collection.sort_options -%}
+              <option value="{{ collection.url }}?sort_by={{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>
+                {{ option.name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Active Filters Display {%- endcomment -%}
+    {%- if section.settings.enable_filtering -%}
+      {%- assign has_active_filters = false -%}
+      {%- for filter in collection.filters -%}
+        {%- if filter.active_values.size > 0 or filter.min_value.value != nil or filter.max_value.value != nil -%}
+          {%- assign has_active_filters = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if has_active_filters -%}
+        <div class="active-filters">
+          <span class="active-filters__label">Active filters:</span>
+          {%- for filter in collection.filters -%}
+            {%- for value in filter.active_values -%}
+              <a href="{{ value.url_to_remove }}" class="active-filters__chip">
+                <span>{{ filter.label }}: {{ value.label }}</span>
+                {% render 'icon-header', name: 'close', class: 'icon-close' %}
+              </a>
+            {%- endfor -%}
+            {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+              <a href="{{ filter.url_to_remove }}" class="active-filters__chip">
+                <span>
+                  {{ filter.min_value.value | default: 0 | money }} - {{ filter.max_value.value | default: filter.range_max | money }}
+                </span>
+                {% render 'icon-header', name: 'close', class: 'icon-close' %}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+          <a href="{{ collection.url }}" class="active-filters__clear">Clear all</a>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%} Main Product Grid {%- endcomment -%}
+    {%- if collection.products.size > 0 -%}
+      <div 
+        class="product-grid product-grid--desktop-{{ section.settings.columns_desktop }} product-grid--mobile-{{ section.settings.columns_mobile }}"
+        id="ProductGridContainer"
+      >
+        {%- for product in collection.products -%}
+          <div class="product-grid__item">
+            {% render 'product-card', 
+              product: product, 
+              show_vendor: section.settings.show_vendor,
+              show_secondary_image: section.settings.show_secondary_image,
+              media_aspect_ratio: section.settings.image_ratio 
+            %}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <div class="collection-pagination">
+          {% render 'pagination', paginate: paginate, anchor: '#CollectionProductGrid' %}
+        </div>
+      {%- endif -%}
+
+    {%- else -%}
+
+      {%- comment -%} Empty Collection State {%- endcomment -%}
+      <div class="collection-empty">
+        <div class="collection-empty__icon">
+          {% render 'icon-header', name: 'search', class: 'icon-empty' %}
+        </div>
+        <h3 class="collection-empty__heading">No products found</h3>
+        <p class="collection-empty__subtext">
+          {%- if has_active_filters -%}
+            Try clearing some of your selected filters or search for something else.
+          {%- else -%}
+            There are currently no products available in this collection.
+          {%- endif -%}
+        </p>
+        <div class="collection-empty__actions">
+          {%- if has_active_filters -%}
+            <a href="{{ collection.url }}" class="btn btn--primary">Clear all filters</a>
+          {%- else -%}
+            <a href="{{ routes.root_url }}" class="btn btn--primary">Continue Shopping</a>
+          {%- endif -%}
+        </div>
+      </div>
+
+    {%- endif -%}
+
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Collection products",
+  "class": "shopify-section-collection",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection Banner"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product Grid"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (4:5)" },
+        { "value": "adapt", "label": "Adapt to image" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show second image on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Filtering & Sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable filtering",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable sorting",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

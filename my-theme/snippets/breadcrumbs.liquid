@@ -1,0 +1,87 @@
+{% comment %}
+  Renders breadcrumbs navigation for collections, products, pages, articles, and blogs.
+{% endcomment %}
+
+{%- unless template == 'index' or template == 'cart' or template == '404' -%}
+  <nav class="breadcrumbs page-width" role="navigation" aria-label="Breadcrumbs">
+    <ol class="breadcrumbs__list" role="list">
+      <li class="breadcrumbs__item">
+        <a href="{{ routes.root_url }}" class="breadcrumbs__link">Home</a>
+      </li>
+
+      {%- case template.name -%}
+        {%- when 'collection' -%}
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          {%- if current_tags -%}
+            <li class="breadcrumbs__item">
+              {{ collection.title | link_to: collection.url, class: 'breadcrumbs__link' }}
+            </li>
+            <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+            <li class="breadcrumbs__item">
+              <span class="breadcrumbs__current" aria-current="page">{{ current_tags | join: " + " }}</span>
+            </li>
+          {%- else -%}
+            <li class="breadcrumbs__item">
+              <span class="breadcrumbs__current" aria-current="page">{{ collection.title }}</span>
+            </li>
+          {%- endif -%}
+
+        {%- when 'product' -%}
+          {%- if collection.url -%}
+            <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+            <li class="breadcrumbs__item">
+              {{ collection.title | link_to: collection.url, class: 'breadcrumbs__link' }}
+            </li>
+          {%- endif -%}
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          <li class="breadcrumbs__item">
+            <span class="breadcrumbs__current" aria-current="page">{{ product.title }}</span>
+          </li>
+
+        {%- when 'blog' -%}
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          {%- if current_tags -%}
+            <li class="breadcrumbs__item">
+              {{ blog.title | link_to: blog.url, class: 'breadcrumbs__link' }}
+            </li>
+            <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+            <li class="breadcrumbs__item">
+              <span class="breadcrumbs__current" aria-current="page">{{ current_tags | join: " + " }}</span>
+            </li>
+          {%- else -%}
+            <li class="breadcrumbs__item">
+              <span class="breadcrumbs__current" aria-current="page">{{ blog.title }}</span>
+            </li>
+          {%- endif -%}
+
+        {%- when 'article' -%}
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          <li class="breadcrumbs__item">
+            {{ blog.title | link_to: blog.url, class: 'breadcrumbs__link' }}
+          </li>
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          <li class="breadcrumbs__item">
+            <span class="breadcrumbs__current" aria-current="page">{{ article.title }}</span>
+          </li>
+
+        {%- when 'page' -%}
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          <li class="breadcrumbs__item">
+            <span class="breadcrumbs__current" aria-current="page">{{ page.title }}</span>
+          </li>
+
+        {%- when 'search' -%}
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          <li class="breadcrumbs__item">
+            <span class="breadcrumbs__current" aria-current="page">Search: "{{ search.terms }}"</span>
+          </li>
+
+        {%- else -%}
+          <li class="breadcrumbs__item" aria-hidden="true">&rsaquo;</li>
+          <li class="breadcrumbs__item">
+            <span class="breadcrumbs__current" aria-current="page">{{ page_title }}</span>
+          </li>
+      {%- endcase -%}
+    </ol>
+  </nav>
+{%- endunless -%}

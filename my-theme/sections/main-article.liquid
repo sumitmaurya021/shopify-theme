@@ -1,0 +1,59 @@
+{% comment %}
+  MAIN ARTICLE SECTION
+  Renders single blog article detail with featured image and rich content.
+{% endcomment %}
+
+<article class="article-template page-width page-width--narrow" id="MainArticle-{{ section.id }}">
+  {% render 'breadcrumbs' %}
+
+  <header class="article-template__header">
+    <div class="article-template__meta">
+      <span class="article-template__date">{{ article.published_at | time_tag: format: 'date' }}</span>
+      {%- if section.settings.show_author -%}
+        <span class="article-template__author">&bull; by {{ article.author }}</span>
+      {%- endif -%}
+    </div>
+    <h1 class="article-template__title">{{ article.title | escape }}</h1>
+  </header>
+
+  {%- if article.image and section.settings.show_featured_image -%}
+    <div class="article-template__hero">
+      {{ article.image | image_url: width: 1200 | image_tag:
+        class: 'article-template__hero-image',
+        loading: 'eager',
+        alt: article.image.alt | default: article.title | escape
+      }}
+    </div>
+  {%- endif -%}
+
+  <div class="article-template__content rte">
+    {{ article.content }}
+  </div>
+
+  <div class="article-template__footer">
+    <a href="{{ blog.url }}" class="btn btn--secondary">
+      &larr; Back to {{ blog.title }}
+    </a>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Article content",
+  "class": "shopify-section-main-article",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_featured_image",
+      "label": "Show featured image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author name",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

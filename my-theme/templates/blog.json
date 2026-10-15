@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-blog",
+      "settings": {
+        "articles_per_page": 6,
+        "show_author": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,0 +1,46 @@
+{% comment %}
+  MAIN 404 SECTION
+  Custom error page rendered when Shopify encounters a broken or missing route.
+{% endcomment %}
+
+<div class="error-404 page-width text-center" id="Section404">
+  <div class="error-404__content">
+    <span class="error-404__subheading">404 Error</span>
+    <h1 class="error-404__title">Page Not Found</h1>
+    <p class="error-404__text">
+      The page you were looking for doesn't exist, has been removed, or is temporarily unavailable.
+    </p>
+
+    <div class="error-404__search">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form-404">
+        <input 
+          type="search" 
+          name="q" 
+          placeholder="Search our catalog..." 
+          class="search-form-404__input"
+          aria-label="Search"
+        >
+        <button type="submit" class="btn btn--primary search-form-404__btn">
+          Search
+        </button>
+      </form>
+    </div>
+
+    <div class="error-404__actions">
+      <a href="{{ routes.root_url }}" class="btn btn--secondary">
+        Back to Home
+      </a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
+        Browse All Products
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404 Error page",
+  "class": "shopify-section-main-404",
+  "settings": []
+}
+{% endschema %}

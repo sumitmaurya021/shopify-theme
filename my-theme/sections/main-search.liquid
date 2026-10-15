@@ -1,0 +1,112 @@
+{% comment %}
+  MAIN SEARCH SECTION
+  Dedicated full-page search results template at /search.
+{% endcomment %}
+
+{%- paginate search.results by section.settings.results_per_page -%}
+  <div class="search-page page-width" id="MainSearch">
+    
+    {% render 'breadcrumbs' %}
+
+    <div class="search-page__header">
+      <h1 class="search-page__title">Search Results</h1>
+      
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-page__form">
+        <div class="search-page__input-wrap">
+          <input 
+            type="search" 
+            name="q" 
+            value="{{ search.terms | escape }}" 
+            placeholder="Search products, collections, articles..." 
+            class="search-page__input"
+            aria-label="Search"
+          >
+          <input type="hidden" name="options[prefix]" value="last">
+          <button type="submit" class="btn btn--primary search-page__btn">
+            {% render 'icon-header', name: 'search', class: 'icon-search' %}
+            <span>Search</span>
+          </button>
+        </div>
+      </form>
+
+      {%- if search.performed -%}
+        <p class="search-page__status">
+          {{ search.results_count }} {{ search.results_count | pluralize: 'result', 'results' }} found for "<strong>{{ search.terms }}</strong>"
+        </p>
+      {%- endif -%}
+    </div>
+
+    {%- if search.performed -%}
+      {%- if search.results.size > 0 -%}
+        <div class="product-grid product-grid--desktop-{{ section.settings.columns_desktop }} product-grid--mobile-2">
+          {%- for item in search.results -%}
+            <div class="product-grid__item">
+              {%- case item.object_type -%}
+                {%- when 'product' -%}
+                  {% render 'product-card', product: item, show_vendor: true, show_secondary_image: true %}
+                {%- when 'article' -%}
+                  <div class="search-article-card">
+                    <span class="search-article-card__badge">Article</span>
+                    <h3 class="search-article-card__title">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    <p class="search-article-card__excerpt">{{ item.content | strip_html | truncatewords: 25 }}</p>
+                    <a href="{{ item.url }}" class="search-article-card__link">Read Article &rarr;</a>
+                  </div>
+                {%- when 'page' -%}
+                  <div class="search-article-card">
+                    <span class="search-article-card__badge">Page</span>
+                    <h3 class="search-article-card__title">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    <p class="search-article-card__excerpt">{{ item.content | strip_html | truncatewords: 25 }}</p>
+                    <a href="{{ item.url }}" class="search-article-card__link">View Page &rarr;</a>
+                  </div>
+              {%- endcase -%}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <div class="search-pagination">
+            {% render 'pagination', paginate: paginate, anchor: '#MainSearch' %}
+          </div>
+        {%- endif -%}
+
+      {%- else -%}
+        <div class="search-empty">
+          <h3>No results found</h3>
+          <p>Check the spelling or try searching with different keywords.</p>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Search results",
+  "class": "shopify-section-main-search",
+  "settings": [
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "label": "Results per page",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    }
+  ]
+}
+{% endschema %}

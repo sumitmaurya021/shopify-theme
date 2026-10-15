@@ -1,0 +1,236 @@
+{% comment %}
+  MAIN PRODUCT SECTION
+  Features: Product Gallery, Variant Selection, Real-Time Price Update, Inventory Badge, Collapsible Tabs, Ajax Cart Integration.
+{% endcomment %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+<div class="product-page page-width" id="ProductSection-{{ section.id }}" data-section-id="{{ section.id }}">
+  
+  {% render 'breadcrumbs' %}
+
+  <div class="product-layout">
+    
+    {%- comment -%} Product Media Gallery {%- endcomment -%}
+    <div class="product-gallery" data-product-gallery>
+      <div class="product-gallery__main">
+        {%- if product.featured_media -%}
+          {{ product.featured_media | image_url: width: 1200 | image_tag:
+            class: 'product-gallery__main-image',
+            loading: 'eager',
+            widths: '400, 600, 800, 1000, 1200',
+            id: 'ProductMainImage',
+            alt: product.featured_media.alt | default: product.title | escape
+          }}
+        {%- else -%}
+          <div class="product-gallery__placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if product.media.size > 1 -%}
+        <div class="product-gallery__thumbnails" role="list">
+          {%- for media in product.media -%}
+            <button 
+              type="button" 
+              class="product-gallery__thumb{% if forloop.first %} is-active{% endif %}"
+              data-media-id="{{ media.id }}"
+              data-target-src="{{ media | image_url: width: 1200 }}"
+              aria-label="Thumbnail {{ forloop.index }}"
+            >
+              {{ media | image_url: width: 160 | image_tag:
+                class: 'product-gallery__thumb-image',
+                loading: 'lazy',
+                alt: media.alt | default: product.title | escape
+              }}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Product Information {%- endcomment -%}
+    <div class="product-info">
+      
+      {%- if section.settings.show_vendor and product.vendor != blank -%}
+        <span class="product-info__vendor">{{ product.vendor }}</span>
+      {%- endif -%}
+
+      <h1 class="product-info__title">{{ product.title | escape }}</h1>
+
+      <div class="product-info__price-wrapper" id="Price-{{ section.id }}">
+        {% render 'price', product: product, use_variant: true, price_class: 'price--large' %}
+      </div>
+
+      {%- if section.settings.show_inventory_notice -%}
+        <div class="product-info__inventory" id="Inventory-{{ section.id }}">
+          {%- if current_variant.available -%}
+            <span class="inventory-status inventory-status--in-stock">
+              <span class="inventory-dot"></span>
+              In Stock, Ready to Ship
+            </span>
+          {%- else -%}
+            <span class="inventory-status inventory-status--sold-out">
+              <span class="inventory-dot"></span>
+              Currently Sold Out
+            </span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Variant Selector {%- endcomment -%}
+      {%- unless product.has_only_default_variant -%}
+        <variant-selects class="product-info__variants" data-section="{{ section.id }}" data-url="{{ product.url }}">
+          {%- for option in product.options_with_values -%}
+            <fieldset class="variant-picker">
+              <legend class="variant-picker__legend">
+                <span class="variant-picker__label">{{ option.name }}:</span>
+                <span class="variant-picker__selected-val" data-selected-value>{{ option.selected_value }}</span>
+              </legend>
+              <div class="variant-picker__options">
+                {%- for value in option.values -%}
+                  <label class="variant-picker__option-label">
+                    <input 
+                      type="radio" 
+                      name="{{ option.name }}" 
+                      value="{{ value | escape }}"
+                      class="variant-picker__radio visually-hidden"
+                      {% if option.selected_value == value %}checked{% endif %}
+                    >
+                    <span class="variant-picker__pill">{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+
+          <script type="application/json" id="ProductVariantsJson-{{ section.id }}">
+            {{ product.variants | json }}
+          </script>
+        </variant-selects>
+      {%- endunless -%}
+
+      {%- comment -%} Product Add-to-Cart Form {%- endcomment -%}
+      <div class="product-info__form-wrapper">
+        {%- assign product_form_id = 'ProductForm-' | append: section.id -%}
+        {%- form 'product', product, id: product_form_id, class: 'product-form', data-product-form: '' -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" id="ProductVariantId-{{ section.id }}">
+
+          <div class="product-form__buttons">
+            <div class="product-form__quantity">
+              <label for="Quantity-{{ section.id }}" class="visually-hidden">Quantity</label>
+              <div class="cart-drawer-item__quantity-selector">
+                <button type="button" class="qty-btn" data-product-qty-minus aria-label="Decrease quantity">&minus;</button>
+                <input 
+                  type="number" 
+                  name="quantity" 
+                  id="Quantity-{{ section.id }}" 
+                  class="qty-input" 
+                  value="1" 
+                  min="1" 
+                  data-product-qty-input
+                >
+                <button type="button" class="qty-btn" data-product-qty-plus aria-label="Increase quantity">&#43;</button>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              name="add" 
+              class="btn btn--primary product-form__submit-btn" 
+              id="AddToCartBtn-{{ section.id }}"
+              {% unless current_variant.available %}disabled{% endunless %}
+            >
+              <span id="AddToCartText-{{ section.id }}">
+                {%- if current_variant.available -%}
+                  Add to Cart
+                {%- else -%}
+                  Sold Out
+                {%- endif -%}
+              </span>
+            </button>
+          </div>
+
+          {%- if section.settings.show_dynamic_checkout -%}
+            <div class="product-form__dynamic-checkout">
+              {{ form | payment_button }}
+            </div>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+
+      {%- comment -%} Collapsible Details Tabs {%- endcomment -%}
+      <div class="product-info__tabs">
+        {%- if product.description != blank -%}
+          <details class="product-accordion" open>
+            <summary class="product-accordion__summary">
+              <span>Description</span>
+              {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down' %}
+            </summary>
+            <div class="product-accordion__content rte">
+              {{ product.description }}
+            </div>
+          </details>
+        {%- endif -%}
+
+        {%- if section.settings.show_shipping_tab -%}
+          <details class="product-accordion">
+            <summary class="product-accordion__summary">
+              <span>Shipping & Returns</span>
+              {% render 'icon-header', name: 'chevron-down', class: 'icon-chevron-down' %}
+            </summary>
+            <div class="product-accordion__content rte">
+              <p>{{ section.settings.shipping_tab_content | default: 'Free standard delivery on all orders over $75. Orders are shipped within 1-2 business days with tracking.' }}</p>
+            </div>
+          </details>
+        {%- endif -%}
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product details",
+  "class": "shopify-section-product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_inventory_notice",
+      "label": "Show inventory status badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Shipping Tab"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_tab",
+      "label": "Show Shipping & Returns tab",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "shipping_tab_content",
+      "label": "Shipping information text",
+      "default": "Free standard delivery on all orders over $75. Orders are shipped within 1-2 business days with tracking. Easy 30-day returns."
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,22 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": true,
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "image_ratio": "square",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "enable_filtering": true,
+        "enable_sorting": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

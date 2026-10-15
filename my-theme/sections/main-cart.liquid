@@ -1,0 +1,153 @@
+{% comment %}
+  MAIN CART SECTION
+  Dedicated full-page cart template at /cart.
+{% endcomment %}
+
+<div class="cart-page page-width" id="MainCart" data-section-id="{{ section.id }}">
+  
+  <div class="cart-page__header">
+    <h1 class="cart-page__title">Shopping Cart</h1>
+    <a href="{{ routes.all_products_collection_url }}" class="cart-page__continue-link">
+      &larr; Continue shopping
+    </a>
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" id="CartForm" class="cart-page__form">
+      <div class="cart-page__layout">
+        
+        {%- comment -%} Cart Items Table {%- endcomment -%}
+        <div class="cart-page__items-wrapper">
+          <table class="cart-table" role="table">
+            <thead class="cart-table__head">
+              <tr>
+                <th scope="col" class="cart-table__heading cart-table__heading--product">Product</th>
+                <th scope="col" class="cart-table__heading cart-table__heading--price">Price</th>
+                <th scope="col" class="cart-table__heading cart-table__heading--quantity">Quantity</th>
+                <th scope="col" class="cart-table__heading cart-table__heading--total">Total</th>
+              </tr>
+            </thead>
+            <tbody class="cart-table__body">
+              {%- for item in cart.items -%}
+                <tr class="cart-table__row" data-cart-item-key="{{ item.key }}">
+                  <td class="cart-table__cell cart-table__cell--product">
+                    <div class="cart-table__product-info">
+                      <a href="{{ item.url }}" class="cart-table__image-link">
+                        {%- if item.image -%}
+                          {{ item.image | image_url: width: 200 | image_tag:
+                            class: 'cart-table__image',
+                            loading: 'lazy',
+                            alt: item.title | escape
+                          }}
+                        {%- endif -%}
+                      </a>
+                      <div class="cart-table__details">
+                        <h4 class="cart-table__title">
+                          <a href="{{ item.url }}">{{ item.product.title | escape }}</a>
+                        </h4>
+                        {%- unless item.product.has_only_default_variant -%}
+                          <p class="cart-table__variant-title">{{ item.variant.title }}</p>
+                        {%- endunless -%}
+                        {%- if item.selling_plan_allocation -%}
+                          <p class="cart-table__selling-plan">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                        {%- endif -%}
+                        <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" class="cart-table__remove-link">
+                          Remove
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="cart-table__cell cart-table__cell--price" data-label="Price">
+                    <span class="cart-table__price">{{ item.original_price | money }}</span>
+                  </td>
+
+                  <td class="cart-table__cell cart-table__cell--quantity" data-label="Quantity">
+                    <div class="cart-drawer-item__quantity-selector">
+                      <button type="button" class="qty-btn" onclick="const input = this.nextElementSibling; input.value = Math.max(0, parseInt(input.value) - 1); document.getElementById('CartForm').submit();">&minus;</button>
+                      <input 
+                        type="number" 
+                        name="updates[]" 
+                        value="{{ item.quantity }}" 
+                        min="0" 
+                        class="qty-input"
+                        onchange="document.getElementById('CartForm').submit();"
+                      >
+                      <button type="button" class="qty-btn" onclick="const input = this.previousElementSibling; input.value = parseInt(input.value) + 1; document.getElementById('CartForm').submit();">&#43;</button>
+                    </div>
+                  </td>
+
+                  <td class="cart-table__cell cart-table__cell--total" data-label="Total">
+                    <span class="cart-table__total-price">{{ item.final_line_price | money }}</span>
+                  </td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+
+          {%- if section.settings.show_cart_note -%}
+            <div class="cart-page__note">
+              <label for="CartPageNote" class="cart-page__note-label">Special instructions for order:</label>
+              <textarea name="note" id="CartPageNote" class="cart-page__note-input">{{ cart.note }}</textarea>
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Cart Summary Sidebar {%- endcomment -%}
+        <div class="cart-page__summary">
+          <div class="cart-summary-card">
+            <h3 class="cart-summary-card__title">Order Summary</h3>
+
+            <div class="cart-summary-card__row">
+              <span>Subtotal</span>
+              <span class="cart-summary-card__price">{{ cart.total_price | money_with_currency }}</span>
+            </div>
+
+            {%- if cart.total_discount > 0 -%}
+              <div class="cart-summary-card__row cart-summary-card__row--discount">
+                <span>Total Savings</span>
+                <span>-{{ cart.total_discount | money }}</span>
+              </div>
+            {%- endif -%}
+
+            <p class="cart-summary-card__disclaimer">
+              Taxes and shipping calculated at checkout.
+            </p>
+
+            <button type="submit" name="checkout" class="btn btn--primary cart-summary-card__checkout-btn">
+              Proceed to Checkout
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  {%- else -%}
+    <div class="cart-empty-state">
+      <div class="cart-empty-state__icon">
+        {% render 'icon-header', name: 'cart', class: 'icon-cart-empty' %}
+      </div>
+      <h2>Your cart is currently empty</h2>
+      <p>Before you can checkout, you must add some products to your cart.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
+        Start Shopping
+      </a>
+    </div>
+  {%- endif -%}
+
+</div>
+
+{% schema %}
+{
+  "name": "Cart page",
+  "class": "shopify-section-main-cart",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "Enable cart notes",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
