@@ -1,3 +1,10 @@
+/* ==========================================================================
+   BASE CSS — GLOBAL DESIGN SYSTEM FOUNDATION
+   Consumes CSS custom properties from design-tokens.liquid.
+   All global resets, typography, links, forms, and utilities.
+   ========================================================================== */
+
+/* ── Reset ── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -6,50 +13,183 @@
   display: none !important;
 }
 
+/* ── Body ── */
 body {
   margin: 0;
   padding: 0;
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: #111827;
-  background-color: #ffffff;
-  line-height: 1.6;
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
+  font-style: var(--font-body-style);
+  font-size: var(--font-size-base, 16px);
+  color: var(--color-text, #111827);
+  background-color: var(--color-background, #ffffff);
+  line-height: var(--body-line-height, 1.6);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight, 700);
+  font-style: var(--font-heading-style);
+  letter-spacing: var(--heading-letter-spacing, -0.02em);
+  line-height: var(--heading-line-height, 1.2);
+  color: var(--color-heading, #09090b);
+}
+
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+h4 { font-size: var(--font-size-h4); }
+h5 { font-size: var(--font-size-h5); }
+h6 { font-size: var(--font-size-h6); }
+
+/* ── Links ── */
 a {
-  color: inherit;
+  color: var(--color-link, inherit);
+  text-decoration: none;
+  transition: color var(--transition-fast, 0.18s ease);
+}
+
+a:hover {
+  color: var(--color-link-hover, inherit);
+}
+
+/* Content links (inside rich text) */
+.rte a,
+.content a:not(.btn) {
+  color: var(--color-link, inherit);
+  text-decoration-color: currentColor;
+  text-underline-offset: var(--link-underline-offset, 3px);
+  text-decoration-thickness: var(--link-underline-thickness, 1px);
+  transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+}
+
+.rte a:hover,
+.content a:not(.btn):hover {
+  color: var(--color-link-hover, inherit);
+}
+
+/* Link underline behaviors — controlled by settings */
+body[data-link-underline="always"] .rte a,
+body[data-link-underline="always"] .content a:not(.btn) {
+  text-decoration: underline;
+}
+
+body[data-link-underline="hover"] .rte a,
+body[data-link-underline="hover"] .content a:not(.btn) {
   text-decoration: none;
 }
 
-/* Utilities */
-.page-width {
-  max-width: var(--header-max-width, 1400px);
-  margin: 0 auto;
-  padding: 0 1.5rem;
+body[data-link-underline="hover"] .rte a:hover,
+body[data-link-underline="hover"] .content a:not(.btn):hover {
+  text-decoration: underline;
 }
 
-/* Hero Section */
+body[data-link-underline="none"] .rte a,
+body[data-link-underline="none"] .content a:not(.btn) {
+  text-decoration: none;
+}
+
+/* ── Focus ── */
+:focus-visible {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: 2px;
+}
+
+/* ── Forms (global defaults) ── */
+input, select, textarea, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  background-color: var(--color-input-bg, #ffffff);
+  border: var(--border-width, 1px) solid var(--color-input-border, #d1d5db);
+  border-radius: var(--radius-sm, 8px);
+  color: var(--color-text, #111827);
+  transition: border-color var(--transition-fast);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-primary, #111827);
+  outline: none;
+}
+
+/* ── Utilities ── */
+.page-width {
+  max-width: var(--page-width, 1400px);
+  margin: 0 auto;
+  padding: 0 var(--page-gutter, 1.5rem);
+}
+
+.page-width--narrow {
+  max-width: var(--section-width-narrow, 820px) !important;
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ── Rich Text Content ── */
+.rte {
+  line-height: 1.7;
+  color: var(--color-subtext, #374151);
+}
+
+.rte p {
+  margin: 0 0 1.25rem 0;
+}
+
+.rte img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm, 8px);
+}
+
+.rte h2, .rte h3, .rte h4 {
+  color: var(--color-heading, #111827);
+  margin: 1.75rem 0 0.85rem 0;
+}
+
+/* ── Hero Section ── */
 .hero {
   padding: 6rem 2rem;
   text-align: center;
-  background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+  background: linear-gradient(180deg, var(--color-muted-bg, #f9fafb) 0%, var(--color-background, #ffffff) 100%);
 }
 
 .hero h1 {
-  font-size: 2.75rem;
+  font-size: var(--font-size-h1, 2.75rem);
   font-weight: 800;
-  letter-spacing: -0.025em;
-  color: #111827;
+  letter-spacing: var(--heading-letter-spacing, -0.025em);
+  color: var(--color-heading, #111827);
   margin: 0;
 }
 
-/* Footer */
+/* ── Footer ── */
 .footer {
   margin-top: auto;
   padding: 2.5rem 2rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
   text-align: center;
-  color: #6b7280;
-  font-size: 0.875rem;
+  color: var(--color-subtext, #6b7280);
+  font-size: var(--font-size-small, 0.875rem);
 }

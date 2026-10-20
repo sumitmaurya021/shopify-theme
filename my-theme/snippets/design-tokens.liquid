@@ -1,0 +1,201 @@
+{% comment %}
+  GLOBAL DESIGN TOKENS
+  Central source of truth: converts Theme Editor settings into CSS custom properties.
+  Included once in theme.liquid <head>.
+{% endcomment %}
+
+{%- liquid
+  # ── Page Width Preset ──
+  case settings.page_width_preset
+    when 'compact'
+      assign page_width_val = 1200
+    when 'wide'
+      assign page_width_val = 1600
+    else
+      assign page_width_val = 1400
+  endcase
+
+  # ── Heading Scale Preset ──
+  case settings.heading_scale
+    when 'compact'
+      assign h1_min = '1.5rem'
+      assign h1_max = '2rem'
+      assign h2_min = '1.25rem'
+      assign h2_max = '1.65rem'
+      assign h3_min = '1.1rem'
+      assign h3_max = '1.35rem'
+      assign h4_min = '1rem'
+      assign h4_max = '1.15rem'
+    when 'editorial'
+      assign h1_min = '2.25rem'
+      assign h1_max = '3.5rem'
+      assign h2_min = '1.75rem'
+      assign h2_max = '2.65rem'
+      assign h3_min = '1.35rem'
+      assign h3_max = '1.85rem'
+      assign h4_min = '1.1rem'
+      assign h4_max = '1.45rem'
+    else
+      assign h1_min = '1.75rem'
+      assign h1_max = '2.75rem'
+      assign h2_min = '1.5rem'
+      assign h2_max = '2.25rem'
+      assign h3_min = '1.25rem'
+      assign h3_max = '1.65rem'
+      assign h4_min = '1rem'
+      assign h4_max = '1.25rem'
+  endcase
+
+  # ── Spacing Preset ──
+  case settings.spacing_preset
+    when 'compact'
+      assign spacing_scale = 0.75
+    when 'spacious'
+      assign spacing_scale = 1.3
+    else
+      assign spacing_scale = 1.0
+  endcase
+
+  # ── Shadow Intensity ──
+  case settings.shadow_intensity
+    when 'none'
+      assign shadow_sm = 'none'
+      assign shadow_md = 'none'
+      assign shadow_lg = 'none'
+      assign shadow_xl = 'none'
+    when 'subtle'
+      assign shadow_sm = '0 1px 2px 0 rgba(0, 0, 0, 0.03)'
+      assign shadow_md = '0 2px 6px -1px rgba(0, 0, 0, 0.04)'
+      assign shadow_lg = '0 6px 14px -3px rgba(0, 0, 0, 0.05)'
+      assign shadow_xl = '0 12px 24px -6px rgba(0, 0, 0, 0.06)'
+    when 'elevated'
+      assign shadow_sm = '0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+      assign shadow_md = '0 6px 16px -3px rgba(0, 0, 0, 0.08), 0 3px 6px -3px rgba(0, 0, 0, 0.04)'
+      assign shadow_lg = '0 16px 32px -6px rgba(0, 0, 0, 0.1), 0 6px 10px -5px rgba(0, 0, 0, 0.04)'
+      assign shadow_xl = '0 28px 48px -10px rgba(0, 0, 0, 0.12), 0 10px 16px -8px rgba(0, 0, 0, 0.06)'
+    else
+      assign shadow_sm = '0 1px 3px 0 rgba(0, 0, 0, 0.04)'
+      assign shadow_md = '0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03)'
+      assign shadow_lg = '0 12px 24px -4px rgba(0, 0, 0, 0.06), 0 4px 8px -4px rgba(0, 0, 0, 0.03)'
+      assign shadow_xl = '0 24px 38px -8px rgba(0, 0, 0, 0.08), 0 8px 12px -6px rgba(0, 0, 0, 0.04)'
+  endcase
+
+  # ── Button hover ──
+  assign btn_hover_transform = 'none'
+  if settings.button_hover_effect == 'lift'
+    assign btn_hover_transform = 'translateY(-2px)'
+  endif
+-%}
+
+{%- comment -%} Font face declarations via Shopify font_picker {%- endcomment -%}
+{% style %}
+  {{ settings.font_body | font_face: font_display: 'swap' }}
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+{% endstyle %}
+
+<style id="GlobalDesignTokens">
+  :root {
+    /* ═══════════ COLORS ═══════════ */
+    --color-background: {{ settings.color_background }};
+    --color-text: {{ settings.color_text }};
+    --color-heading: {{ settings.color_heading }};
+    --color-subtext: {{ settings.color_subtext }};
+    --color-primary: {{ settings.color_primary }};
+    --color-primary-text: {{ settings.color_primary_text }};
+    --color-secondary: {{ settings.color_secondary }};
+    --color-secondary-text: {{ settings.color_secondary_text }};
+    --color-link: {{ settings.color_link }};
+    --color-link-hover: {{ settings.color_link_hover }};
+    --color-border: {{ settings.color_border }};
+    --color-border-light: {{ settings.color_border_light }};
+    --color-card-bg: {{ settings.color_card_bg }};
+    --color-muted-bg: {{ settings.color_muted_bg }};
+    --color-input-bg: {{ settings.color_input_bg }};
+    --color-input-border: {{ settings.color_input_border }};
+    --color-focus: {{ settings.color_focus }};
+    --color-sale: {{ settings.color_sale }};
+    --color-success: {{ settings.color_success }};
+    --color-error: {{ settings.color_error }};
+
+    /* ═══════════ TYPOGRAPHY ═══════════ */
+    --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    --font-body-weight: {{ settings.font_body.weight }};
+    --font-body-style: {{ settings.font_body.style }};
+    --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+    --font-heading-weight: {{ settings.font_heading.weight }};
+    --font-heading-style: {{ settings.font_heading.style }};
+
+    --font-size-base: {{ settings.font_size_base }}px;
+    --body-line-height: {{ settings.body_line_height }};
+    --heading-letter-spacing: {{ settings.heading_letter_spacing | default: 0 }}px;
+    --heading-line-height: {{ settings.heading_line_height }};
+
+    /* Heading Fluid Scale */
+    --font-size-h1: clamp({{ h1_min }}, 3.2vw, {{ h1_max }});
+    --font-size-h2: clamp({{ h2_min }}, 2.6vw, {{ h2_max }});
+    --font-size-h3: clamp({{ h3_min }}, 2vw, {{ h3_max }});
+    --font-size-h4: clamp({{ h4_min }}, 1.5vw, {{ h4_max }});
+    --font-size-h5: 1rem;
+    --font-size-h6: 0.875rem;
+    --font-size-small: 0.85rem;
+    --font-size-caption: 0.75rem;
+
+    /* Navigation */
+    --nav-font-size: {{ settings.nav_font_size }}px;
+    --nav-font-weight: {{ settings.nav_font_weight }};
+
+    /* ═══════════ BUTTONS ═══════════ */
+    --button-radius: {{ settings.button_border_radius }}px;
+    --button-border-width: {{ settings.button_border_width }}px;
+    --button-padding-v: {{ settings.button_padding_v }}px;
+    --button-padding-h: {{ settings.button_padding_h }}px;
+    --button-font-size: {{ settings.button_font_size }}px;
+    --button-font-weight: {{ settings.button_font_weight }};
+    --button-text-transform: {{ settings.button_text_transform }};
+    --button-letter-spacing: {{ settings.button_letter_spacing | default: 0.5 }}px;
+    --button-hover-transform: {{ btn_hover_transform }};
+
+    /* ═══════════ LINKS ═══════════ */
+    --link-underline-thickness: {{ settings.link_underline_thickness }};
+    --link-underline-offset: {{ settings.link_underline_offset }}px;
+
+    /* ═══════════ BORDERS & CORNERS ═══════════ */
+    --radius-sm: {{ settings.radius_sm }}px;
+    --radius-md: {{ settings.radius_md }}px;
+    --radius-lg: {{ settings.radius_lg }}px;
+    --radius-xl: {{ settings.radius_lg | plus: 8 }}px;
+    --radius-full: 9999px;
+    --border-width: {{ settings.border_width }}px;
+
+    /* ═══════════ SHADOWS ═══════════ */
+    --shadow-sm: {{ shadow_sm }};
+    --shadow-md: {{ shadow_md }};
+    --shadow-lg: {{ shadow_lg }};
+    --shadow-xl: {{ shadow_xl }};
+
+    /* ═══════════ LAYOUT & WIDTH ═══════════ */
+    --page-width: {{ page_width_val }}px;
+    --section-width-narrow: {{ settings.section_width_narrow }}px;
+    --section-width-standard: {{ settings.section_width_standard }}px;
+    --section-width-wide: {{ settings.section_width_wide }}px;
+    --section-width-full: 100%;
+    --page-gutter: {{ settings.page_gutter_mobile }}px;
+
+    /* ═══════════ SPACING ═══════════ */
+    --section-spacing: {{ settings.section_spacing_mobile }}px;
+    --grid-gap: {{ settings.grid_gap }}px;
+    --spacing-scale: {{ spacing_scale }};
+
+    /* ═══════════ TRANSITIONS ═══════════ */
+    --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-slow: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --page-gutter: {{ settings.page_gutter_desktop }}px;
+      --section-spacing: {{ settings.section_spacing_desktop }}px;
+    }
+  }
+</style>

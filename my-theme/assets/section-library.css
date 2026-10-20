@@ -1,33 +1,11 @@
 /* ==========================================================================
    UNIVERSAL SHOPIFY SECTION LIBRARY DESIGN SYSTEM - LUXURY EDITORIAL EDITION
    High-contrast, harmonious color schemes, refined typography, and premium card depth.
+   
+   NOTE: Layout tokens (--section-width-*, --radius-*, --shadow-*, --transition-*)
+   are now defined globally via snippets/design-tokens.liquid → Theme Editor.
+   This file inherits those global tokens. Color schemes layer on top.
    ========================================================================== */
-
-:root {
-  /* Layout & Width Tokens */
-  --section-width-narrow: 820px;
-  --section-width-standard: 1240px;
-  --section-width-wide: 1440px;
-  --section-width-full: 100%;
-  
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 26px;
-  --radius-full: 9999px;
-
-  /* Premium Luxury Shadows */
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.06), 0 4px 8px -4px rgba(0, 0, 0, 0.03);
-  --shadow-xl: 0 24px 38px -8px rgba(0, 0, 0, 0.08), 0 8px 12px -6px rgba(0, 0, 0, 0.04);
-
-  /* Transitions */
-  --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-slow: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
 
 /* --------------------------------------------------------------------------
    HARMONIOUS LUXURY COLOR SCHEMES
@@ -40,66 +18,93 @@
 .color-scheme-1 {
   background-color: #ffffff;
   color: #111827;
+  --color-text: #111827;
   --color-border: #edebe6;
   --color-subtext: #4b5563;
   --color-heading: #09090b;
   --color-card-bg: #fcfbf9;
   --color-card-border: #e9e7e1;
+  --color-input-border: #d1d5db;
+  --color-link: #111827;
+  --color-link-hover: #2563eb;
 }
 
 /* Warm Alabaster / Fine Italian Linen */
 .color-scheme-2 {
   background-color: #f7f6f2;
   color: #18181b;
+  --color-text: #18181b;
   --color-border: #e6e4dc;
   --color-subtext: #4b5563;
   --color-heading: #09090b;
   --color-card-bg: #ffffff;
   --color-card-border: #e8e6df;
+  --color-input-border: #d1d5db;
+  --color-link: #18181b;
+  --color-link-hover: #2563eb;
 }
 
 /* Gallery Slate / Soft Porcelain */
 .color-scheme-3 {
   background-color: #f0f2f5;
   color: #0f172a;
+  --color-text: #0f172a;
   --color-border: #e2e8f0;
   --color-subtext: #475569;
   --color-heading: #0f172a;
   --color-card-bg: #ffffff;
   --color-card-border: #cbd5e1;
+  --color-input-border: #cbd5e1;
+  --color-link: #0f172a;
+  --color-link-hover: #2563eb;
 }
 
 /* Deep Obsidian Midnight */
 .color-scheme-4 {
   background-color: #0c0d12;
   color: #f8fafc;
+  --color-text: #f8fafc;
   --color-border: rgba(255, 255, 255, 0.12);
   --color-subtext: #94a3b8;
   --color-heading: #ffffff;
   --color-card-bg: #151720;
   --color-card-border: rgba(255, 255, 255, 0.15);
+  --color-input-border: rgba(255, 255, 255, 0.2);
+  --color-input-bg: rgba(255, 255, 255, 0.06);
+  --color-link: #e2e8f0;
+  --color-link-hover: #93c5fd;
 }
 
 /* Pure Onyx Velvet */
 .color-scheme-5 {
   background-color: #060709;
   color: #ffffff;
+  --color-text: #ffffff;
   --color-border: rgba(255, 255, 255, 0.1);
   --color-subtext: #a1a1aa;
   --color-heading: #ffffff;
   --color-card-bg: #101116;
   --color-card-border: rgba(255, 255, 255, 0.12);
+  --color-input-border: rgba(255, 255, 255, 0.18);
+  --color-input-bg: rgba(255, 255, 255, 0.06);
+  --color-link: #e4e4e7;
+  --color-link-hover: #93c5fd;
 }
 
 /* Deep Midnight Royal Luxe (Replaces generic bright cobalt blue) */
 .color-scheme-accent {
   background: linear-gradient(135deg, #090e1a 0%, #121c33 100%);
   color: #ffffff;
+  --color-text: #ffffff;
   --color-border: rgba(255, 255, 255, 0.15);
   --color-subtext: #cbd5e1;
   --color-heading: #ffffff;
   --color-card-bg: rgba(255, 255, 255, 0.08);
   --color-card-border: rgba(255, 255, 255, 0.2);
+  --color-input-border: rgba(255, 255, 255, 0.22);
+  --color-input-bg: rgba(255, 255, 255, 0.06);
+  --color-link: #e2e8f0;
+  --color-link-hover: #93c5fd;
 }
 
 /* --------------------------------------------------------------------------
@@ -115,15 +120,8 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .section-container {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-  }
+  padding-left: var(--page-gutter, 1.5rem);
+  padding-right: var(--page-gutter, 1.5rem);
 }
 
 .section-container--narrow {
@@ -252,59 +250,58 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.9rem 2rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  padding: var(--button-padding-v, 0.9rem) var(--button-padding-h, 2rem);
+  border-radius: var(--button-radius, var(--radius-sm, 8px));
+  font-size: var(--button-font-size, 0.95rem);
+  font-weight: var(--button-font-weight, 700);
+  letter-spacing: var(--button-letter-spacing, 0.01em);
+  text-transform: var(--button-text-transform, none);
   text-decoration: none;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: var(--button-border-width, 1px) solid transparent;
   transition: all var(--transition-normal);
   text-align: center;
 }
 
 .btn--primary {
-  background-color: #09090b;
-  color: #ffffff;
-  border-color: #09090b;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-primary, #09090b);
+  color: var(--color-primary-text, #ffffff);
+  border-color: var(--color-primary, #09090b);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn--primary:hover {
-  background-color: #27272a;
-  border-color: #27272a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  filter: brightness(1.15);
+  transform: var(--button-hover-transform, translateY(-2px));
+  box-shadow: var(--shadow-md);
 }
 
 .btn--secondary {
-  background-color: #ffffff;
-  color: #09090b;
-  border: 1px solid #d4d4d8;
+  background-color: var(--color-secondary, #ffffff);
+  color: var(--color-secondary-text, #09090b);
+  border: var(--button-border-width, 1px) solid var(--color-border, #d4d4d8);
   box-shadow: var(--shadow-sm);
 }
 
 .btn--secondary:hover {
-  background-color: #fafafa;
-  border-color: #09090b;
-  transform: translateY(-2px);
+  border-color: var(--color-primary, #09090b);
+  transform: var(--button-hover-transform, translateY(-2px));
   box-shadow: var(--shadow-md);
 }
 
 .btn--white {
   background-color: #ffffff;
-  color: #09090b;
-  border: 1px solid #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  color: var(--color-primary, #09090b);
+  border: var(--button-border-width, 1px) solid #ffffff;
+  box-shadow: var(--shadow-md);
 }
 
 .btn--white:hover {
   background-color: #f4f4f5;
   color: #000000;
   border-color: #f4f4f5;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.25);
+  transform: var(--button-hover-transform, translateY(-2px));
+  box-shadow: var(--shadow-lg);
 }
 
 .btn--outline {
@@ -315,18 +312,18 @@
 
 .btn--outline:hover {
   background-color: #ffffff;
-  color: #09090b;
+  color: var(--color-primary, #09090b);
   border-color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: var(--button-hover-transform, translateY(-2px));
+  box-shadow: var(--shadow-md);
 }
 
 .color-scheme-1 .btn--outline:hover,
 .color-scheme-2 .btn--outline:hover,
 .color-scheme-3 .btn--outline:hover {
-  background-color: #09090b;
-  color: #ffffff;
-  border-color: #09090b;
+  background-color: var(--color-primary, #09090b);
+  color: var(--color-primary-text, #ffffff);
+  border-color: var(--color-primary, #09090b);
 }
 
 .btn--pill {

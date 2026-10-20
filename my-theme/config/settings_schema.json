@@ -8,6 +8,600 @@
     "theme_support_url": "https://example.com"
   },
   {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Primary Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Page background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Body text",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "color_heading",
+        "label": "Headings",
+        "default": "#09090b"
+      },
+      {
+        "type": "color",
+        "id": "color_subtext",
+        "label": "Secondary text",
+        "default": "#4b5563"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary / brand color",
+        "default": "#111827",
+        "info": "Used for primary buttons and key interactive elements"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_text",
+        "label": "Primary button text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary button background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary_text",
+        "label": "Secondary button text",
+        "default": "#111827"
+      },
+      {
+        "type": "header",
+        "content": "Links"
+      },
+      {
+        "type": "color",
+        "id": "color_link",
+        "label": "Link color",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "color_link_hover",
+        "label": "Link hover color",
+        "default": "#2563eb"
+      },
+      {
+        "type": "header",
+        "content": "Surfaces & Borders"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Borders & dividers",
+        "default": "#e5e7eb"
+      },
+      {
+        "type": "color",
+        "id": "color_border_light",
+        "label": "Subtle borders",
+        "default": "#f3f4f6"
+      },
+      {
+        "type": "color",
+        "id": "color_card_bg",
+        "label": "Card background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_muted_bg",
+        "label": "Muted / subtle background",
+        "default": "#f9fafb"
+      },
+      {
+        "type": "color",
+        "id": "color_input_bg",
+        "label": "Input background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_input_border",
+        "label": "Input border",
+        "default": "#d1d5db"
+      },
+      {
+        "type": "header",
+        "content": "Focus & States"
+      },
+      {
+        "type": "color",
+        "id": "color_focus",
+        "label": "Focus indicator color",
+        "default": "#2563eb"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale / discount",
+        "default": "#dc2626"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success / in-stock",
+        "default": "#059669"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Error / warning",
+        "default": "#ef4444"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Font Families"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "plus_jakarta_sans_n4",
+        "info": "Used for body text, labels, and general content"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "plus_jakarta_sans_n7",
+        "info": "Used for all headings and section titles"
+      },
+      {
+        "type": "header",
+        "content": "Body Typography"
+      },
+      {
+        "type": "range",
+        "id": "font_size_base",
+        "label": "Base font size (px)",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "body_line_height",
+        "label": "Body line height",
+        "min": 1.2,
+        "max": 2.0,
+        "step": 0.1,
+        "default": 1.6
+      },
+      {
+        "type": "header",
+        "content": "Heading Scale"
+      },
+      {
+        "type": "select",
+        "id": "heading_scale",
+        "label": "Heading size scale",
+        "options": [
+          { "value": "compact", "label": "Compact" },
+          { "value": "standard", "label": "Standard" },
+          { "value": "editorial", "label": "Editorial (large)" }
+        ],
+        "default": "standard",
+        "info": "Controls H1–H6 sizes globally. Individual sections can override."
+      },
+      {
+        "type": "range",
+        "id": "heading_letter_spacing",
+        "label": "Heading letter spacing (px)",
+        "min": -1,
+        "max": 3,
+        "step": 0.1,
+        "default": 0,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "heading_line_height",
+        "label": "Heading line height",
+        "min": 1,
+        "max": 1.6,
+        "step": 0.1,
+        "default": 1.2
+      },
+      {
+        "type": "header",
+        "content": "Navigation Typography"
+      },
+      {
+        "type": "range",
+        "id": "nav_font_size",
+        "label": "Navigation font size (px)",
+        "min": 12,
+        "max": 18,
+        "step": 1,
+        "default": 15,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "nav_font_weight",
+        "label": "Navigation font weight",
+        "options": [
+          { "value": "400", "label": "Regular" },
+          { "value": "500", "label": "Medium" },
+          { "value": "600", "label": "Semibold" },
+          { "value": "700", "label": "Bold" }
+        ],
+        "default": "500"
+      }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Shape & Size"
+      },
+      {
+        "type": "range",
+        "id": "button_border_radius",
+        "label": "Corner radius (px)",
+        "min": 0,
+        "max": 40,
+        "step": 1,
+        "default": 8,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "button_border_width",
+        "label": "Border width (px)",
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "default": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "button_padding_v",
+        "label": "Vertical padding (px)",
+        "min": 6,
+        "max": 22,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "button_padding_h",
+        "label": "Horizontal padding (px)",
+        "min": 12,
+        "max": 48,
+        "step": 1,
+        "default": 32,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "range",
+        "id": "button_font_size",
+        "label": "Font size (px)",
+        "min": 12,
+        "max": 18,
+        "step": 1,
+        "default": 15,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "button_font_weight",
+        "label": "Font weight",
+        "options": [
+          { "value": "500", "label": "Medium" },
+          { "value": "600", "label": "Semibold" },
+          { "value": "700", "label": "Bold" }
+        ],
+        "default": "700"
+      },
+      {
+        "type": "select",
+        "id": "button_text_transform",
+        "label": "Text transform",
+        "options": [
+          { "value": "none", "label": "None" },
+          { "value": "uppercase", "label": "Uppercase" }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "range",
+        "id": "button_letter_spacing",
+        "label": "Letter spacing (px)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 0.5,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Hover Behavior"
+      },
+      {
+        "type": "select",
+        "id": "button_hover_effect",
+        "label": "Hover animation",
+        "options": [
+          { "value": "lift", "label": "Lift up" },
+          { "value": "darken", "label": "Darken" },
+          { "value": "none", "label": "None" }
+        ],
+        "default": "lift"
+      }
+    ]
+  },
+  {
+    "name": "Links",
+    "settings": [
+      {
+        "type": "select",
+        "id": "link_underline",
+        "label": "Link underline style",
+        "options": [
+          { "value": "none", "label": "None" },
+          { "value": "always", "label": "Always visible" },
+          { "value": "hover", "label": "On hover only" }
+        ],
+        "default": "hover"
+      },
+      {
+        "type": "select",
+        "id": "link_underline_thickness",
+        "label": "Underline thickness",
+        "options": [
+          { "value": "1px", "label": "Thin (1px)" },
+          { "value": "2px", "label": "Medium (2px)" }
+        ],
+        "default": "1px"
+      },
+      {
+        "type": "range",
+        "id": "link_underline_offset",
+        "label": "Underline offset (px)",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "default": 3,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Borders & Corners",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Corner Radius"
+      },
+      {
+        "type": "range",
+        "id": "radius_sm",
+        "label": "Small radius (px)",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "default": 8,
+        "unit": "px",
+        "info": "Inputs, small cards, badges"
+      },
+      {
+        "type": "range",
+        "id": "radius_md",
+        "label": "Medium radius (px)",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "default": 12,
+        "unit": "px",
+        "info": "Cards, gallery images, dropdowns"
+      },
+      {
+        "type": "range",
+        "id": "radius_lg",
+        "label": "Large radius (px)",
+        "min": 0,
+        "max": 32,
+        "step": 1,
+        "default": 18,
+        "unit": "px",
+        "info": "Hero images, large containers"
+      },
+      {
+        "type": "header",
+        "content": "Border Width"
+      },
+      {
+        "type": "range",
+        "id": "border_width",
+        "label": "Default border width (px)",
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "default": 1,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Shadows",
+    "settings": [
+      {
+        "type": "select",
+        "id": "shadow_intensity",
+        "label": "Shadow intensity",
+        "options": [
+          { "value": "none", "label": "No shadows" },
+          { "value": "subtle", "label": "Subtle" },
+          { "value": "medium", "label": "Medium (default)" },
+          { "value": "elevated", "label": "Elevated" }
+        ],
+        "default": "medium",
+        "info": "Controls the depth of card shadows, dropdowns, and elevated elements"
+      }
+    ]
+  },
+  {
+    "name": "Layout & Width",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Page Width"
+      },
+      {
+        "type": "select",
+        "id": "page_width_preset",
+        "label": "Page width",
+        "options": [
+          { "value": "compact", "label": "Compact (1200px)" },
+          { "value": "standard", "label": "Standard (1400px)" },
+          { "value": "wide", "label": "Wide (1600px)" }
+        ],
+        "default": "standard",
+        "info": "Maximum width for main content, header, and footer"
+      },
+      {
+        "type": "header",
+        "content": "Section Widths"
+      },
+      {
+        "type": "range",
+        "id": "section_width_narrow",
+        "label": "Narrow section width (px)",
+        "min": 640,
+        "max": 960,
+        "step": 20,
+        "default": 820,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_width_standard",
+        "label": "Standard section width (px)",
+        "min": 1000,
+        "max": 1440,
+        "step": 20,
+        "default": 1240,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_width_wide",
+        "label": "Wide section width (px)",
+        "min": 1200,
+        "max": 1800,
+        "step": 20,
+        "default": 1440,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Page Gutters"
+      },
+      {
+        "type": "range",
+        "id": "page_gutter_mobile",
+        "label": "Mobile page gutter (px)",
+        "min": 12,
+        "max": 32,
+        "step": 2,
+        "default": 24,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "page_gutter_desktop",
+        "label": "Desktop page gutter (px)",
+        "min": 24,
+        "max": 64,
+        "step": 4,
+        "default": 40,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Spacing",
+    "settings": [
+      {
+        "type": "select",
+        "id": "spacing_preset",
+        "label": "Spacing scale",
+        "options": [
+          { "value": "compact", "label": "Compact" },
+          { "value": "standard", "label": "Standard" },
+          { "value": "spacious", "label": "Spacious" }
+        ],
+        "default": "standard",
+        "info": "Controls vertical spacing between sections and internal component spacing"
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_desktop",
+        "label": "Section spacing — desktop (px)",
+        "min": 20,
+        "max": 120,
+        "step": 4,
+        "default": 60,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_mobile",
+        "label": "Section spacing — mobile (px)",
+        "min": 16,
+        "max": 80,
+        "step": 4,
+        "default": 40,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "grid_gap",
+        "label": "Grid gap (px)",
+        "min": 8,
+        "max": 40,
+        "step": 2,
+        "default": 24,
+        "unit": "px"
+      }
+    ]
+  },
+  {
     "name": "Cart",
     "settings": [
       {
